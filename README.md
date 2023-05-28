@@ -9,19 +9,19 @@ O sistema de gerenciamento de tarefas de crianças, faz o gerenciamento de ativi
 
 ### Cadastro de responsável:
 
-- O responsável se cadastra na plataforma através do nome e-mail e senha.
+- O responsável se cadastra na plataforma através do nome e-mail e senha. O reponsável poderá acessar a plataforma por meio de login e senha após efetuar o primeiro cadastro.
 
-- Cadastro das crianças:
+### Cadastro de criança:
 
-- O responsável cadastra a criança através de nome completo e idade. Da mesma maneira, esta poderia ser editada e excluída.
+- O responsável cadastra a criança através de nome completo e idade. Da mesma maneira, esta poderia ser editada e excluída. A criança poderá acessar a plataforma por meio de login e senha após o responsável efetuar o seu cadastro.
 
 ### Cadastrar valor mensal total: 
 
-- O responsável entraria no sistema e adicionaria um valor mensal de recompensa para cada criança cadastrada, podendo também simplesmente editá-lo ou remove-lo.
+- O responsável entraria no sistema, efetuaria o login e adicionaria um valor mensal de recompensa para cada criança cadastrada, podendo também simplesmente editá-lo ou remove-lo.
 
 ### Cadastrar atividade:
 
-- O responsável entraria no sistema e criaria a atividade, inserindo o nome, peso em porcentagem e descrição. Da mesma maneira, esta poderia ser editada e excluída. O responsável poderia fazer a confirmação da atividade como realizada no sistema.
+- O responsável entraria no sistema, efetuaria o login e criaria a atividade, inserindo o nome, peso em porcentagem e descrição. Da mesma maneira, esta poderia ser editada e excluída. O responsável poderia fazer a confirmação da atividade como realizada no sistema.
 
 ### Atribuir bônus: 
 
@@ -33,15 +33,18 @@ O sistema de gerenciamento de tarefas de crianças, faz o gerenciamento de ativi
 
 ### Visualização da tarefas:
 
-- A criança poderá visualizar as tarefas planejadas pelo responsável.      
+- A criança entraria no sistema, efetuaria o login e poderia visualizar as tarefas planejadas pelo responsável.      
 
 ### Visualização da recompensa ganha:
 
-- A criança poderá visualizar o valor ganho pelas atividades realizadas.
+- A criança entraria no sistema, efetuaria o login e poderá visualizar o valor ganho pelas atividades realizadas.
 
 ## Atores:
 
 - Responsável:
+    - cadastrar-se
+
+    - cadastrar criança
 
     - criar tarefas
 
