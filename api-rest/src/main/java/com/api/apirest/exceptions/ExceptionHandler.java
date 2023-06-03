@@ -24,7 +24,7 @@ public class ExceptionHandler {
     MessageProperty messageProperty;
 
     @org.springframework.web.bind.annotation.ExceptionHandler(com.api.apirest.exceptions.handler.BadRequest.class)
-    public final @NotNull ResponseEntity<BadRequest> handleBadResquestExceptions(Exception exception, WebRequest request) {
+    public final @NotNull ResponseEntity<BadRequest> handleBadRequestExceptions(Exception exception, WebRequest request) {
 
         String field = setField(exception);
 

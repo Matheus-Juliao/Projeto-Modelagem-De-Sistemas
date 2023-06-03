@@ -15,8 +15,8 @@ public class SecurityConfigurations {
 
     @Bean
     @SuppressWarnings("unused")
-    public SecurityFilterChain filterChain(HttpSecurity htpp) throws Exception {
-        htpp
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
                 .httpBasic()
                 .and()
                 .authorizeHttpRequests()
@@ -24,6 +24,6 @@ public class SecurityConfigurations {
                 .and()
                 .csrf().disable();
 
-        return  htpp.build();
+        return  http.build();
     }
 }
