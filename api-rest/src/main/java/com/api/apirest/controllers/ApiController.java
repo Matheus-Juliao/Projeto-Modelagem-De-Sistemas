@@ -1,7 +1,8 @@
 package com.api.apirest.controllers;
 
+import com.api.apirest.dtos.NewRegisterChildDto;
+import com.api.apirest.dtos.NewRegisterSponsorDto;
 import com.api.apirest.dtos.RespLoginDto;
-import com.api.apirest.dtos.NewRegisterDto;
 import com.api.apirest.dtos.LoginDto;
 import com.api.apirest.exceptions.handler.BadRequest;
 import com.api.apirest.messages.Messages;
@@ -36,37 +37,48 @@ public class ApiController {
     @Autowired
     ApiRestService apiRestService;
 
-    @PostMapping("/new-register")
-    @Operation(summary = "Register user",  description = "Api for register a new user on the platform")
+    @PostMapping("/sponsor/new-register")
+    @Operation(summary = "Register sponsor",  description = "Api for register a new sponsor on the platform")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created", content =  { @Content(mediaType = "application/json", schema = @Schema(implementation = Messages.class)) }),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
     })
-    public ResponseEntity<Object> createUser (@RequestBody @Valid NewRegisterDto newRegisterDto, BindingResult result) throws BadRequest {
+    public ResponseEntity<Object> createSponsor (@RequestBody @Valid NewRegisterSponsorDto newRegisterSponsorDto, BindingResult result) throws BadRequest {
         if (result.hasErrors()) {
             throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
         }
 
-        //Verificar se é uma criança que está sendo cadastrada
-        if(newRegisterDto.isChild()) {
-            ChildModel childModel = new ChildModel();
-//            BeanUtils.copyProperties(newRegisterDto, childModel);
-            childModel.setCreatedDate(LocalDateTime.now(ZoneId.of("UTC")));
-            childModel.setExternalId(UUID.randomUUID().toString());
-            childModel.setPassword(apiRestService.passwordEncoder(childModel.getPassword()));
-
-            return apiRestService.saveChild(childModel);
-        }
-
-        //Faz o cadastro do responsável
+        //Manipula os atributos do model
         SponsorModel sponsorModel = new SponsorModel();
-//        BeanUtils.copyProperties(newRegisterDto, sponsorModel);
+        BeanUtils.copyProperties(newRegisterSponsorDto, sponsorModel);
         sponsorModel.setCreatedDate(LocalDateTime.now(ZoneId.of("UTC")));
         sponsorModel.setExternalId(UUID.randomUUID().toString());
         sponsorModel.setPassword(apiRestService.passwordEncoder(sponsorModel.getPassword()));
 
         return apiRestService.saveSponsor(sponsorModel);
+    }
+
+    @PostMapping("/child/new-register")
+    @Operation(summary = "Register child",  description = "Api for register an new child on the platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Created", content =  { @Content(mediaType = "application/json", schema = @Schema(implementation = Messages.class)) }),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public ResponseEntity<Object> createChild (@RequestBody @Valid NewRegisterChildDto newRegisterChildDto, BindingResult result) throws BadRequest {
+        if (result.hasErrors()) {
+            throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
+        }
+
+        //Manipula os atributos do model
+        ChildModel childModel = new ChildModel();
+        BeanUtils.copyProperties(newRegisterChildDto, childModel);
+        childModel.setCreatedDate(LocalDateTime.now(ZoneId.of("UTC")));
+        childModel.setExternalId(UUID.randomUUID().toString());
+        childModel.setPassword(apiRestService.passwordEncoder(childModel.getPassword()));
+
+        return apiRestService.saveChild(childModel);
     }
 
     @PostMapping("/login")

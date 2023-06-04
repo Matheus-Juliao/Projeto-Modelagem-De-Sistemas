@@ -59,7 +59,7 @@ public class ApiRestService {
             Messages messages = new Messages(messageProperty.getProperty("error.email.already.account"), HttpStatus.BAD_REQUEST.value());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
         }
-
+        
         //Se não existir grava o usuário no banco de dados
         childRepository.save(childModel);
         Messages messages = new Messages(messageProperty.getProperty("ok.user.registered"), HttpStatus.CREATED.value());
@@ -70,10 +70,10 @@ public class ApiRestService {
     public ResponseEntity<Object> login(@NotNull LoginDto loginDto) {
 
         //Verificar se quem está entrando no sistema é uma criança
-        if (loginDto.isChild()) {
+        if (loginDto.getIsChild()) {
 
-            //Verificar se a criança está cadastrada no sistema
-            if(childRepository.existsByNickname(loginDto.getUser())) {
+            //Verificar se a criança não está cadastrada no sistema
+            if(!childRepository.existsByNickname(loginDto.getUser())) {
                 throw new BadRequest(messageProperty.getProperty("error.account.notRegistered"));
             }
 

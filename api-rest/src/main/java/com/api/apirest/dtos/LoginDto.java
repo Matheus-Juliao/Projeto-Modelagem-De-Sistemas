@@ -18,5 +18,5 @@ public class LoginDto {
     @Size(min = 5, max = 20, message = "{error.password.size}")
     private String password;
 
-    private boolean isChild;
+    private Boolean isChild;
 }
