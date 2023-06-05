@@ -15,8 +15,8 @@ public class NewRegisterChildDto {
     @Size(min = 2, max = 30, message = "{error.name.size}")
     private String name;
 
-    @NotBlank(message = "{error.nickname.notBlank=}")
-    @NotNull(message = "{error.nickname.notNull=}")
+    @NotBlank(message = "{error.nickname.notNull}")
+    @NotNull(message = "{error.nickname.notNull}")
     private String nickname;
 
     @NotNull(message = "{error.age.notNull}")

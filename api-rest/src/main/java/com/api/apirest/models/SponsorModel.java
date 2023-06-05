@@ -6,6 +6,7 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -39,5 +40,5 @@ public class SponsorModel implements Serializable {
     @JoinTable(name = "sponsor_child",
             joinColumns = @JoinColumn(name = "id_sponsor"),
             inverseJoinColumns = @JoinColumn(name = "id_child"))
-    private List<ChildModel> childModels;
+    private List<ChildModel> childModels = new ArrayList<>();
 }

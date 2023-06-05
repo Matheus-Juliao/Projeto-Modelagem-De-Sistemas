@@ -20,6 +20,8 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+
 @Service
 public class ApiRestService {
 
@@ -38,32 +40,47 @@ public class ApiRestService {
 
     @Transactional
     public ResponseEntity<Object> saveSponsor (SponsorModel sponsorModel) {
-
-        //Verificar se usuário já está cadastrado no banco de dados
+        //Verificar se o responsável já está cadastrado no banco de dados
         if(sponsorRepository.existsByEmail(sponsorModel.getEmail())) {
             Messages messages = new Messages(messageProperty.getProperty("error.email.already.account"), HttpStatus.BAD_REQUEST.value());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
         }
 
-        //Se não existir grava o usuário no banco de dados
+        //Se não existir grava o responsável no banco de dados
         sponsorRepository.save(sponsorModel);
         Messages messages = new Messages(messageProperty.getProperty("ok.user.registered"), HttpStatus.CREATED.value());
         return ResponseEntity.status(HttpStatus.OK).body(messages);
     }
 
     @Transactional
-    public ResponseEntity<Object> saveChild (ChildModel childModel) {
+    public ResponseEntity<Object> saveChild (ChildModel childModel, String externalIdSponsor) {
+        try {
+            //Verificar se a criança já está cadastrada no banco de dados
+            if(childRepository.existsByNickname(childModel.getNickname())) {
+                Messages messages = new Messages(messageProperty.getProperty("error.nickname.already.account"), HttpStatus.BAD_REQUEST.value());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+            }
 
-        //Verificar se usuário já está cadastrado no banco de dados
-        if(sponsorRepository.existsByEmail(childModel.getNickname())) {
-            Messages messages = new Messages(messageProperty.getProperty("error.email.already.account"), HttpStatus.BAD_REQUEST.value());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+            //Se não existir busca o responsável com externalId passado
+            SponsorModel sponsorModel = sponsorRepository.findByExternalId(externalIdSponsor);
+
+            //verifica se a lista de child models foi inicializada
+            if (sponsorModel.getChildModels() == null) {
+                sponsorModel.setChildModels(new ArrayList<>());
+            }
+            //Grava na tabela auxiliar o id do responsável e o id da criança
+            sponsorModel.getChildModels().add(childModel);
+            childModel.getSponsorModels().add(sponsorModel);
+            //Salva a criança no banco de dados
+            childRepository.save(childModel);
+            Messages messages = new Messages(messageProperty.getProperty("ok.user.registered"), HttpStatus.CREATED.value());
+            return ResponseEntity.status(HttpStatus.OK).body(messages);
+        } catch (NullPointerException e) {
+            Messages messages = new Messages(messageProperty.getProperty("error.sponsorExternalId.notFound"), HttpStatus.CREATED.value());
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
         }
-        
-        //Se não existir grava o usuário no banco de dados
-        childRepository.save(childModel);
-        Messages messages = new Messages(messageProperty.getProperty("ok.user.registered"), HttpStatus.CREATED.value());
-        return ResponseEntity.status(HttpStatus.OK).body(messages);
+
+        return null;
     }
 
     @Transactional

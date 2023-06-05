@@ -6,6 +6,7 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,13 +24,10 @@ public class ChildModel implements Serializable {
     @Column(name = "external_id", length = 45, nullable = false, unique = true)
     private String externalId;
 
-    @Column(name = "external_id_sponsor", length = 45, nullable = false, unique = true)
-    private String externalIdSponsor;
-
     @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50, unique = true)
     private String nickname;
 
     @Column(nullable = false, length = 2)
@@ -42,5 +40,5 @@ public class ChildModel implements Serializable {
     private LocalDateTime createdDate;
 
     @ManyToMany(mappedBy = "childModels")
-    private List<SponsorModel> sponsorModels;
+    private List<SponsorModel> sponsorModels = new ArrayList<>();
 }

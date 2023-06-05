@@ -78,7 +78,7 @@ public class ApiController {
         childModel.setExternalId(UUID.randomUUID().toString());
         childModel.setPassword(apiRestService.passwordEncoder(childModel.getPassword()));
 
-        return apiRestService.saveChild(childModel);
+        return apiRestService.saveChild(childModel, newRegisterChildDto.getExternalIdSponsor());
     }
 
     @PostMapping("/login")
