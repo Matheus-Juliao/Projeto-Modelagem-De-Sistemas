@@ -1,0 +1,158 @@
+{
+	"info": {
+		"_postman_id": "c05efb0f-c5e4-4502-b2b3-d0969e41e750",
+		"name": "PROJETO - MODELAGEM DE SISTEMAS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21171850"
+	},
+	"item": [
+		{
+			"name": "new register sponsor",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Matheus José Julião\",\r\n    \"email\": \"matheusjosejuliao@gmail.com\",\r\n    \"password\": \"test123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/sponsor/new-register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"sponsor",
+						"new-register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update sponsor",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Matheus Julião\",\r\n    \"email\": \"matheusjosejuliao@gmail.com.br\",\r\n    \"password\": \"test12345\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/sponsor/ab16901c-34c1-434a-b5cf-7d9e854fb0fd",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"sponsor",
+						"ab16901c-34c1-434a-b5cf-7d9e854fb0fd"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "new register child",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"externalIdSponsor\": \"6b600940-f46a-4e7f-9fb9-db96163241b5\",\r\n    \"name\": \"Rebeca Cristina Julião\",\r\n    \"nickname\": \"rebeca10\",\r\n    \"age\": 10,\r\n    \"password\": \"test123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/child/new-register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"child",
+						"new-register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login sponsor",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user\": \"matheusjosejuliao@gmail.com\",\r\n    \"password\": \"test123\",\r\n    \"isChild\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login sponsor child",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user\": \"rebeca10\",\r\n    \"password\": \"test123\",\r\n    \"isChild\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
