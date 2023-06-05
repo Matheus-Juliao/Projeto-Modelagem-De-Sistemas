@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 public class ChildDto {
 
-    @NotBlank(message = "{error.sponsorExternalId.notNull}")
-    @NotNull(message = "{error.sponsorExternalId.notBlank=}")
+    @NotBlank(message = "{error.externalIdSponsor.notBlank}")
+    @NotNull(message = "{error.externalIdSponsor.notNull}")
     private String externalIdSponsor;
 
     @NotBlank(message = "{error.name.notBlank}")
@@ -17,6 +17,7 @@ public class ChildDto {
 
     @NotBlank(message = "{error.nickname.notNull}")
     @NotNull(message = "{error.nickname.notNull}")
+    @Size(max = 50, message = "{error.nickname.size}")
     private String nickname;
 
     @NotNull(message = "{error.age.notNull}")

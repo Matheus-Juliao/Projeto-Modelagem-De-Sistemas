@@ -66,6 +66,7 @@ public class ApiRestService {
 
             //Se não existir busca o responsável com externalId passado
             SponsorModel sponsorModel = sponsorRepository.findByExternalId(externalIdSponsor);
+            childModel.setUserCreator(externalIdSponsor);
 
             //verifica se a lista de child models foi inicializada
             if (sponsorModel.getChildModels() == null) {
@@ -79,11 +80,13 @@ public class ApiRestService {
             Messages messages = new Messages(messageProperty.getProperty("ok.user.registered"), HttpStatus.CREATED.value());
             return ResponseEntity.status(HttpStatus.OK).body(messages);
         } catch (NullPointerException e) {
-            Messages messages = new Messages(messageProperty.getProperty("error.sponsorExternalId.notFound"), HttpStatus.CREATED.value());
+            Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.CREATED.value());
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
         }
 
-        return null;
+        Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.CREATED.value());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
     }
 
     @Transactional
@@ -94,7 +97,7 @@ public class ApiRestService {
 
             //Verificar se a criança não está cadastrada no sistema
             if(!childRepository.existsByNickname(loginDto.getUser())) {
-                throw new BadRequest(messageProperty.getProperty("error.account.notRegistered"));
+                throw new BadRequest(messageProperty.getProperty("error.nickname.notRegistered"));
             }
 
             //Busca criança no banco de dados
@@ -123,7 +126,7 @@ public class ApiRestService {
 
             //Verificar se o responsável está cadastrado no sistema
             if(!sponsorRepository.existsByEmail(loginDto.getUser())) {
-                throw new BadRequest(messageProperty.getProperty("error.account.notRegistered"));
+                throw new BadRequest(messageProperty.getProperty("error.email.notRegistered"));
             }
 
             //Busca responsável no banco de dados
@@ -148,7 +151,7 @@ public class ApiRestService {
     public ResponseEntity<Object> updateSponsor(SponsorDto sponsorDto, String externalId) {
         //Verifica se não existe o externalId
         if(!sponsorRepository.existsByExternalId(externalId)) {
-            Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.BAD_REQUEST.value());
+            Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.BAD_REQUEST.value());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
         }
 
@@ -163,7 +166,6 @@ public class ApiRestService {
 
         return ResponseEntity.status(HttpStatus.OK).body(respSponsorDto);
     }
-
 
     //Criptografia de senha
     public String passwordEncoder(String password) {

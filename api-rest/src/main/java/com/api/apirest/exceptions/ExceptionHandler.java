@@ -83,9 +83,7 @@ public class ExceptionHandler {
         if (exception.getMessage().compareTo(messageProperty.getProperty("error.email.notNull")) == 0
                 || exception.getMessage().compareTo(messageProperty.getProperty("error.email.notBlank")) == 0
                 || exception.getMessage().compareTo(messageProperty.getProperty("error.email.size")) == 0
-                || exception.getMessage().compareTo(messageProperty.getProperty("error.email.invalid")) == 0
-                || exception.getMessage().compareTo(messageProperty.getProperty("error.email.notRegistered")) == 0
-                || exception.getMessage().compareTo(messageProperty.getProperty("error.account.notRegistered")) == 0) {
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.email.invalid")) == 0) {
             return "email";
         }
 
@@ -94,6 +92,22 @@ public class ExceptionHandler {
                 || exception.getMessage().compareTo(messageProperty.getProperty("error.password.size")) == 0
                 || exception.getMessage().compareTo(messageProperty.getProperty("error.password.incorrect")) == 0) {
             return "password";
+        }
+
+        if(exception.getMessage().compareTo(messageProperty.getProperty("error.nickname.notNull")) == 0
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.nickname.notBlank")) == 0
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.nickname.size")) == 0) {
+            return "nickname";
+        }
+
+        if(exception.getMessage().compareTo(messageProperty.getProperty("error.age.notNull")) == 0
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.age.notBlank")) == 0) {
+            return "age";
+        }
+
+        if(exception.getMessage().compareTo(messageProperty.getProperty("error.externalIdSponsor.notBlank")) == 0
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.externalIdSponsor.notNull")) == 0) {
+            return "sponsorExternalId";
         }
 
         return null;

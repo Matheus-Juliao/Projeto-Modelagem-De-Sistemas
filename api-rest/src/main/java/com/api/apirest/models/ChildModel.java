@@ -39,6 +39,9 @@ public class ChildModel implements Serializable {
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;
 
+    @Column(name = "user_creator", nullable = false)
+    private String userCreator;
+
     @ManyToMany(mappedBy = "childModels")
     private List<SponsorModel> sponsorModels = new ArrayList<>();
 }
