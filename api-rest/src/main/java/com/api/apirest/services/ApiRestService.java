@@ -1,8 +1,10 @@
 package com.api.apirest.services;
 
 import com.api.apirest.configurations.MessageProperty;
-import com.api.apirest.dtos.RespLoginDto;
+import com.api.apirest.dtos.RespChildDto;
+import com.api.apirest.dtos.RespSponsorDto;
 import com.api.apirest.dtos.LoginDto;
+import com.api.apirest.dtos.SponsorDto;
 import com.api.apirest.exceptions.handler.BadRequest;
 import com.api.apirest.exceptions.handler.Unauthorized;
 import com.api.apirest.messages.Messages;
@@ -13,6 +15,7 @@ import com.api.apirest.repositories.SponsorRepository;
 import com.api.apirest.security.SecurityConfigurations;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -99,11 +102,14 @@ public class ApiRestService {
 
             //Verifica se a senha passada é a senha registrada no banco
             if(BCrypt.checkpw(loginDto.getPassword(), childModel.getPassword())) {
-                RespLoginDto respLoginDto = new RespLoginDto(
-                        childModel.getExternalId(), childModel.getNickname(), childModel.getName()
+                RespChildDto respSponsorDto = new RespChildDto(
+                        childModel.getExternalId(),
+                        childModel.getName(),
+                        childModel.getNickname(),
+                        childModel.getAge()
                 );
 
-                return ResponseEntity.status(HttpStatus.OK).body(respLoginDto);
+                return ResponseEntity.status(HttpStatus.OK).body(respSponsorDto);
             }
 
             throw new Unauthorized(messageProperty.getProperty("error.unauthorized"));
@@ -125,17 +131,37 @@ public class ApiRestService {
 
             //Verifica se a senha passada é a senha registrada no banco
             if(BCrypt.checkpw(loginDto.getPassword(), sponsorModel.getPassword())) {
-                RespLoginDto respLoginDto = new RespLoginDto(
+                RespSponsorDto respSponsorDto = new RespSponsorDto(
                         sponsorModel.getExternalId(), sponsorModel.getEmail(), sponsorModel.getName()
                 );
 
-                return ResponseEntity.status(HttpStatus.OK).body(respLoginDto);
+                return ResponseEntity.status(HttpStatus.OK).body(respSponsorDto);
             }
 
             throw new Unauthorized(messageProperty.getProperty("error.unauthorized"));
         }
 
         throw new BadRequest(messageProperty.getProperty("error.email.invalid"));
+    }
+
+    @Transactional
+    public ResponseEntity<Object> updateSponsor(SponsorDto sponsorDto, String externalId) {
+        //Verifica se não existe o externalId
+        if(!sponsorRepository.existsByExternalId(externalId)) {
+            Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.BAD_REQUEST.value());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+        }
+
+        //Faz o update
+        SponsorModel sponsorModel = sponsorRepository.findByExternalId(externalId);
+        BeanUtils.copyProperties(sponsorDto, sponsorModel);
+        sponsorModel.setPassword(passwordEncoder(sponsorModel.getPassword()));
+        sponsorRepository.save(sponsorModel);
+        RespSponsorDto respSponsorDto = new RespSponsorDto(
+                sponsorModel.getExternalId(), sponsorModel.getEmail(), sponsorModel.getName()
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(respSponsorDto);
     }
 
 

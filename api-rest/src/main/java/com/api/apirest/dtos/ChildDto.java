@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
-public class NewRegisterChildDto {
+public class ChildDto {
 
     @NotBlank(message = "{error.sponsorExternalId.notNull}")
     @NotNull(message = "{error.sponsorExternalId.notBlank=}")

@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface SponsorRepository extends JpaRepository<SponsorModel, Long> {
     boolean existsByEmail(String email);
+    boolean existsByExternalId(String externaId);
     SponsorModel findByEmail(String email);
-    SponsorModel findByExternalId(String External);
+    SponsorModel findByExternalId(String externaId);
 }

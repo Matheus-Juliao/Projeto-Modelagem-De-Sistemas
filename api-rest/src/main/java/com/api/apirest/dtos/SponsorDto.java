@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class NewRegisterSponsorDto {
+public class SponsorDto {
     @NotBlank(message = "{error.name.notBlank}")
     @NotNull(message = "{error.name.notNull}")
     @Size(min = 2, max = 30, message = "{error.name.size}")

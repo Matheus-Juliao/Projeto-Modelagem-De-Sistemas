@@ -1,8 +1,8 @@
 package com.api.apirest.controllers;
 
-import com.api.apirest.dtos.NewRegisterChildDto;
-import com.api.apirest.dtos.NewRegisterSponsorDto;
-import com.api.apirest.dtos.RespLoginDto;
+import com.api.apirest.dtos.ChildDto;
+import com.api.apirest.dtos.SponsorDto;
+import com.api.apirest.dtos.RespSponsorDto;
 import com.api.apirest.dtos.LoginDto;
 import com.api.apirest.exceptions.handler.BadRequest;
 import com.api.apirest.messages.Messages;
@@ -44,14 +44,14 @@ public class ApiController {
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
     })
-    public ResponseEntity<Object> createSponsor (@RequestBody @Valid NewRegisterSponsorDto newRegisterSponsorDto, BindingResult result) throws BadRequest {
+    public ResponseEntity<Object> createSponsor (@RequestBody @Valid SponsorDto sponsorDto, BindingResult result) throws BadRequest {
         if (result.hasErrors()) {
             throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
         }
 
         //Manipula os atributos do model
         SponsorModel sponsorModel = new SponsorModel();
-        BeanUtils.copyProperties(newRegisterSponsorDto, sponsorModel);
+        BeanUtils.copyProperties(sponsorDto, sponsorModel);
         sponsorModel.setCreatedDate(LocalDateTime.now(ZoneId.of("UTC")));
         sponsorModel.setExternalId(UUID.randomUUID().toString());
         sponsorModel.setPassword(apiRestService.passwordEncoder(sponsorModel.getPassword()));
@@ -66,25 +66,25 @@ public class ApiController {
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
     })
-    public ResponseEntity<Object> createChild (@RequestBody @Valid NewRegisterChildDto newRegisterChildDto, BindingResult result) throws BadRequest {
+    public ResponseEntity<Object> createChild (@RequestBody @Valid ChildDto childDto, BindingResult result) throws BadRequest {
         if (result.hasErrors()) {
             throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
         }
 
         //Manipula os atributos do model
         ChildModel childModel = new ChildModel();
-        BeanUtils.copyProperties(newRegisterChildDto, childModel);
+        BeanUtils.copyProperties(childDto, childModel);
         childModel.setCreatedDate(LocalDateTime.now(ZoneId.of("UTC")));
         childModel.setExternalId(UUID.randomUUID().toString());
         childModel.setPassword(apiRestService.passwordEncoder(childModel.getPassword()));
 
-        return apiRestService.saveChild(childModel, newRegisterChildDto.getExternalIdSponsor());
+        return apiRestService.saveChild(childModel, childDto.getExternalIdSponsor());
     }
 
     @PostMapping("/login")
     @Operation(summary = "Logs the user into the application", description = "API for a user to authenticate on the platform")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Created", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = RespLoginDto.class)) }),
+            @ApiResponse(responseCode = "201", description = "Created", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = RespSponsorDto.class)) }),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
     })
@@ -94,6 +94,21 @@ public class ApiController {
         }
 
         return apiRestService.login(loginDto);
+    }
+
+    @PutMapping("/sponsor/{externalId}")
+    @Operation(summary = "Update sponsor",  description = "Api for update a sponsor on the platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = SponsorDto.class)) }),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public ResponseEntity<Object> updateSponsor(@PathVariable String externalId, @RequestBody @Valid SponsorDto sponsorDto, @NotNull BindingResult result) throws BadRequest {
+        if (result.hasErrors()) {
+            throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
+        }
+
+        return apiRestService.updateSponsor(sponsorDto, externalId);
     }
 
 }
