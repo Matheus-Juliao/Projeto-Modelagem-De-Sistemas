@@ -1,0 +1,275 @@
+{
+	"info": {
+		"_postman_id": "c05efb0f-c5e4-4502-b2b3-d0969e41e750",
+		"name": "PROJETO - MODELAGEM DE SISTEMAS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21171850"
+	},
+	"item": [
+		{
+			"name": "new register sponsor",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Matheus José Julião\",\r\n    \"email\": \"matheusjosejuliao@gmail.com\",\r\n    \"password\": \"test123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/sponsor/new-register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"sponsor",
+						"new-register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update sponsor",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Matheus Julião\",\r\n    \"email\": \"matheusjosejuliao@gmail.com.br\",\r\n    \"password\": \"test12345\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/update-sponsor/ab16901c-34c1-434a-b5cf-7d9e854fb0fd",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"update-sponsor",
+						"ab16901c-34c1-434a-b5cf-7d9e854fb0fd"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update child",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"externalIdSponsor\": \"03faf53c-820b-490b-80c9-9b647bfb727e\",\r\n    \"name\": \"Isaque Julião\",\r\n    \"nickname\": \"Issac08\",\r\n    \"age\": 8,\r\n    \"password\": \"test123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/update-child/6f63957e-7cdc-47a8-a43b-bd89733bf7ba",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"update-child",
+						"6f63957e-7cdc-47a8-a43b-bd89733bf7ba"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "new register child",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"externalIdSponsor\": \"03faf53c-820b-490b-80c9-9b647bfb727e\",\r\n    \"name\": \"Issac Julião\",\r\n    \"nickname\": \"Issac08\",\r\n    \"age\": 8,\r\n    \"password\": \"test123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/child/new-register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"child",
+						"new-register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login sponsor",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user\": \"matheusjosejuliao@gmail.com\",\r\n    \"password\": \"test123\",\r\n    \"isChild\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login sponsor child",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user\": \"rebeca10\",\r\n    \"password\": \"test123\",\r\n    \"isChild\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list all child of sponsor",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api-rest/listAllChild/03faf53c-820b-490b-80c9-9b647bfb727e",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"listAllChild",
+						"03faf53c-820b-490b-80c9-9b647bfb727e"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list sponsor",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api-rest/list-sponsor/03faf53c-820b-490b-80c9-9b647bfb727e",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"list-sponsor",
+						"03faf53c-820b-490b-80c9-9b647bfb727e"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete sponsor Copy",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api-rest/delete-sponsor/ebbf8f94-c8f2-4677-a250-499ecf7d8257",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"delete-sponsor",
+						"ebbf8f94-c8f2-4677-a250-499ecf7d8257"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete sponsor Copy 2",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api-rest/delete-child/6f63957e-7cdc-47a8-a43b-bd89733bf7ba",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"delete-child",
+						"6f63957e-7cdc-47a8-a43b-bd89733bf7ba"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
