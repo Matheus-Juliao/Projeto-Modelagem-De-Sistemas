@@ -51,7 +51,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api-rest/sponsor/ab16901c-34c1-434a-b5cf-7d9e854fb0fd",
+					"raw": "http://localhost:8080/api-rest/update-sponsor/ab16901c-34c1-434a-b5cf-7d9e854fb0fd",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -59,7 +59,7 @@
 					"port": "8080",
 					"path": [
 						"api-rest",
-						"sponsor",
+						"update-sponsor",
 						"ab16901c-34c1-434a-b5cf-7d9e854fb0fd"
 					]
 				}
@@ -73,7 +73,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"externalIdSponsor\": \"6b600940-f46a-4e7f-9fb9-db96163241b5\",\r\n    \"name\": \"Rebeca Cristina Julião\",\r\n    \"nickname\": \"rebeca10\",\r\n    \"age\": 10,\r\n    \"password\": \"test123\"\r\n}",
+					"raw": "{\r\n    \"externalIdSponsor\": \"37a528b8-f5cb-445e-bca9-2c7254fa1c31\",\r\n    \"name\": \"Rebeca Cristina Julião\",\r\n    \"nickname\": \"rebeca10\",\r\n    \"age\": 10,\r\n    \"password\": \"test123\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -149,6 +149,71 @@
 					"path": [
 						"api-rest",
 						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list all sponsor",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api-rest/listAllSponsors",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"listAllSponsors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list sponsor",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api-rest/get-sponsor/6b600940-f46a-4e7f-9fb9-db96163241b5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"get-sponsor",
+						"6b600940-f46a-4e7f-9fb9-db96163241b5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete sponsor Copy",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api-rest/delete-sponsor/ebbf8f94-c8f2-4677-a250-499ecf7d8257",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"delete-sponsor",
+						"ebbf8f94-c8f2-4677-a250-499ecf7d8257"
 					]
 				}
 			},

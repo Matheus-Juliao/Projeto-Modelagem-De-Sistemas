@@ -20,6 +20,9 @@ public class SecurityConfigurations {
                 .httpBasic()
                 .and()
                 .authorizeHttpRequests()
+//                .requestMatchers(HttpMethod.GET, "/api-rest/listAllSponsors").permitAll()
+//                .requestMatchers(HttpMethod.GET, "/api/authentication//listAllUserNoPages").authenticated()
+//                .requestMatchers(HttpMethod.POST, "/api/authentication/login").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .csrf().disable();

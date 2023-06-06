@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ApiRestService {
@@ -41,29 +42,86 @@ public class ApiRestService {
     @Autowired
     SecurityConfigurations securityConfigurations;
 
+    //Sponsor
     @Transactional
     public ResponseEntity<Object> saveSponsor (SponsorModel sponsorModel) {
         //Verificar se o responsável já está cadastrado no banco de dados
         if(sponsorRepository.existsByEmail(sponsorModel.getEmail())) {
             Messages messages = new Messages(messageProperty.getProperty("error.email.already.account"), HttpStatus.BAD_REQUEST.value());
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
         }
-
         //Se não existir grava o responsável no banco de dados
         sponsorRepository.save(sponsorModel);
         Messages messages = new Messages(messageProperty.getProperty("ok.user.registered"), HttpStatus.CREATED.value());
+
         return ResponseEntity.status(HttpStatus.OK).body(messages);
     }
 
+    public ResponseEntity<Object> getSponsor(String externaId) {
+        SponsorModel sponsorModel = sponsorRepository.findByExternalId(externaId);
+        if(sponsorModel != null) {
+            RespSponsorDto respSponsorDto = new RespSponsorDto(
+                    sponsorModel.getExternalId(), sponsorModel.getEmail(), sponsorModel.getName()
+            );
+
+            return ResponseEntity.status(HttpStatus.OK).body(respSponsorDto);
+        }
+        Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.BAD_REQUEST.value());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+    }
+
+    public List<SponsorModel> getAllSponsors() {
+        return sponsorRepository.findAll();
+    }
+
+    @Transactional
+    public  ResponseEntity<Object> deleteSponsor(String externalId) {
+        SponsorModel sponsorModel = sponsorRepository.findByExternalId(externalId);
+        if(sponsorModel != null) {
+            sponsorRepository.delete(sponsorModel);
+            Messages messages = new Messages(messageProperty.getProperty("ok.user.delete"), HttpStatus.OK.value());
+
+            return ResponseEntity.status(HttpStatus.OK).body(messages);
+        }
+        Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.BAD_REQUEST.value());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+    }
+
+    @Transactional
+    public ResponseEntity<Object> updateSponsor(SponsorDto sponsorDto, String externalId) {
+        //Verifica se não existe o externalId
+        if(!sponsorRepository.existsByExternalId(externalId)) {
+            Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.BAD_REQUEST.value());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+        }
+
+        //Faz o update
+        SponsorModel sponsorModel = sponsorRepository.findByExternalId(externalId);
+        BeanUtils.copyProperties(sponsorDto, sponsorModel);
+        sponsorModel.setPassword(passwordEncoder(sponsorModel.getPassword()));
+        sponsorRepository.save(sponsorModel);
+        RespSponsorDto respSponsorDto = new RespSponsorDto(
+                sponsorModel.getExternalId(), sponsorModel.getEmail(), sponsorModel.getName()
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(respSponsorDto);
+    }
+
+
+    //Child
     @Transactional
     public ResponseEntity<Object> saveChild (ChildModel childModel, String externalIdSponsor) {
         try {
             //Verificar se a criança já está cadastrada no banco de dados
             if(childRepository.existsByNickname(childModel.getNickname())) {
                 Messages messages = new Messages(messageProperty.getProperty("error.nickname.already.account"), HttpStatus.BAD_REQUEST.value());
+
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
             }
-
             //Se não existir busca o responsável com externalId passado
             SponsorModel sponsorModel = sponsorRepository.findByExternalId(externalIdSponsor);
             childModel.setUserCreator(externalIdSponsor);
@@ -78,17 +136,19 @@ public class ApiRestService {
             //Salva a criança no banco de dados
             childRepository.save(childModel);
             Messages messages = new Messages(messageProperty.getProperty("ok.user.registered"), HttpStatus.CREATED.value());
+
             return ResponseEntity.status(HttpStatus.OK).body(messages);
         } catch (NullPointerException e) {
             Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.CREATED.value());
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
         }
-
         Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.CREATED.value());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
     }
 
+
+    //Login
     @Transactional
     public ResponseEntity<Object> login(@NotNull LoginDto loginDto) {
 
@@ -111,10 +171,8 @@ public class ApiRestService {
                         childModel.getNickname(),
                         childModel.getAge()
                 );
-
                 return ResponseEntity.status(HttpStatus.OK).body(respSponsorDto);
             }
-
             throw new Unauthorized(messageProperty.getProperty("error.unauthorized"));
         }
 
@@ -140,32 +198,11 @@ public class ApiRestService {
 
                 return ResponseEntity.status(HttpStatus.OK).body(respSponsorDto);
             }
-
             throw new Unauthorized(messageProperty.getProperty("error.unauthorized"));
         }
-
         throw new BadRequest(messageProperty.getProperty("error.email.invalid"));
     }
 
-    @Transactional
-    public ResponseEntity<Object> updateSponsor(SponsorDto sponsorDto, String externalId) {
-        //Verifica se não existe o externalId
-        if(!sponsorRepository.existsByExternalId(externalId)) {
-            Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.BAD_REQUEST.value());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
-        }
-
-        //Faz o update
-        SponsorModel sponsorModel = sponsorRepository.findByExternalId(externalId);
-        BeanUtils.copyProperties(sponsorDto, sponsorModel);
-        sponsorModel.setPassword(passwordEncoder(sponsorModel.getPassword()));
-        sponsorRepository.save(sponsorModel);
-        RespSponsorDto respSponsorDto = new RespSponsorDto(
-                sponsorModel.getExternalId(), sponsorModel.getEmail(), sponsorModel.getName()
-        );
-
-        return ResponseEntity.status(HttpStatus.OK).body(respSponsorDto);
-    }
 
     //Criptografia de senha
     public String passwordEncoder(String password) {

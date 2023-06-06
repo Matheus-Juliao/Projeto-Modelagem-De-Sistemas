@@ -18,12 +18,14 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -37,6 +39,7 @@ public class ApiController {
     @Autowired
     ApiRestService apiRestService;
 
+    //Sponsor
     @PostMapping("/sponsor/new-register")
     @Operation(summary = "Register sponsor",  description = "Api for register a new sponsor on the platform")
     @ApiResponses(value = {
@@ -59,6 +62,49 @@ public class ApiController {
         return apiRestService.saveSponsor(sponsorModel);
     }
 
+    @PutMapping("/update-sponsor/{externalId}")
+    @Operation(summary = "Update sponsor",  description = "Api for update a sponsor on the platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = SponsorDto.class)) }),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public ResponseEntity<Object> updateSponsor(@PathVariable String externalId, @RequestBody @Valid SponsorDto sponsorDto, @NotNull BindingResult result) throws BadRequest {
+        if (result.hasErrors()) {
+            throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
+        }
+        return apiRestService.updateSponsor(sponsorDto, externalId);
+    }
+
+    @GetMapping("get-sponsor/{externalId}")
+    @Operation(summary = "Returns sponsor", description = "API to fetch a sponsor on the platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = RespSponsorDto.class)) }),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public ResponseEntity<Object> listSponsor(@PathVariable String externalId) {
+        return apiRestService.getSponsor(externalId);
+    }
+
+    @GetMapping("/listAllSponsors")
+    @Operation(summary = "Returns all sponsors", description = "API to list all sponsors and their information on the platform")
+    public List<SponsorModel> getAllSponsors() {
+        return apiRestService.getAllSponsors();
+    }
+
+    @DeleteMapping("delete-sponsor/{externalId}")
+    @Operation(summary = "Delete a sponsor's account", description = "API to delete a sponsor account on the platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public ResponseEntity<Object> deleteSponsor(@PathVariable String externalId){
+        return apiRestService.deleteSponsor(externalId);
+    }
+
+
+    //Child
     @PostMapping("/child/new-register")
     @Operation(summary = "Register child",  description = "Api for register an new child on the platform")
     @ApiResponses(value = {
@@ -81,6 +127,8 @@ public class ApiController {
         return apiRestService.saveChild(childModel, childDto.getExternalIdSponsor());
     }
 
+
+    //Login
     @PostMapping("/login")
     @Operation(summary = "Logs the user into the application", description = "API for a user to authenticate on the platform")
     @ApiResponses(value = {
@@ -92,23 +140,7 @@ public class ApiController {
         if(result.hasErrors()) {
             throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
         }
-
         return apiRestService.login(loginDto);
-    }
-
-    @PutMapping("/sponsor/{externalId}")
-    @Operation(summary = "Update sponsor",  description = "Api for update a sponsor on the platform")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = SponsorDto.class)) }),
-            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
-    })
-    public ResponseEntity<Object> updateSponsor(@PathVariable String externalId, @RequestBody @Valid SponsorDto sponsorDto, @NotNull BindingResult result) throws BadRequest {
-        if (result.hasErrors()) {
-            throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
-        }
-
-        return apiRestService.updateSponsor(sponsorDto, externalId);
     }
 
 }
