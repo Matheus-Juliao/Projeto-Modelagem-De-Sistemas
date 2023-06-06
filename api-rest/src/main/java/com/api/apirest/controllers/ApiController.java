@@ -1,9 +1,6 @@
 package com.api.apirest.controllers;
 
-import com.api.apirest.dtos.ChildDto;
-import com.api.apirest.dtos.SponsorDto;
-import com.api.apirest.dtos.RespSponsorDto;
-import com.api.apirest.dtos.LoginDto;
+import com.api.apirest.dtos.*;
 import com.api.apirest.exceptions.handler.BadRequest;
 import com.api.apirest.messages.Messages;
 import com.api.apirest.models.ChildModel;
@@ -76,20 +73,14 @@ public class ApiController {
         return apiRestService.updateSponsor(sponsorDto, externalId);
     }
 
-    @GetMapping("get-sponsor/{externalId}")
+    @GetMapping("list-sponsor/{externalId}")
     @Operation(summary = "Returns sponsor", description = "API to fetch a sponsor on the platform")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = RespSponsorDto.class)) }),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true)))
     })
     public ResponseEntity<Object> listSponsor(@PathVariable String externalId) {
-        return apiRestService.getSponsor(externalId);
-    }
-
-    @GetMapping("/listAllSponsors")
-    @Operation(summary = "Returns all sponsors", description = "API to list all sponsors and their information on the platform")
-    public List<SponsorModel> getAllSponsors() {
-        return apiRestService.getAllSponsors();
+        return apiRestService.listSponsor(externalId);
     }
 
     @DeleteMapping("delete-sponsor/{externalId}")
@@ -125,6 +116,37 @@ public class ApiController {
         childModel.setPassword(apiRestService.passwordEncoder(childModel.getPassword()));
 
         return apiRestService.saveChild(childModel, childDto.getExternalIdSponsor());
+    }
+
+    @PutMapping("/update-child/{externalId}")
+    @Operation(summary = "Update child",  description = "Api for update a child on the platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ChildDto.class)) }),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public ResponseEntity<Object> updateChild(@PathVariable String externalId, @RequestBody @Valid ChildDto childDto, @NotNull BindingResult result) throws BadRequest {
+        if (result.hasErrors()) {
+            throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
+        }
+        return apiRestService.updateChild(childDto, externalId);
+    }
+
+    @GetMapping("/listAllChild/{externalId}")
+    @Operation(summary = "Returns all child of Sponsor", description = "API to list all child of Sponsor and their information on the platform")
+    public ResponseEntity<Object> listChild(@PathVariable String externalId) {
+        return apiRestService.listChild(externalId);
+    }
+
+    @DeleteMapping("delete-child/{externalId}")
+    @Operation(summary = "Delete a child's account", description = "API to delete a child account on the platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public ResponseEntity<Object> deleteChild(@PathVariable String externalId){
+        return apiRestService.deleteChild(externalId);
     }
 
 

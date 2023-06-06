@@ -36,9 +36,10 @@ public class SponsorModel implements Serializable {
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "sponsor_child",
-            joinColumns = @JoinColumn(name = "id_sponsor"),
-            inverseJoinColumns = @JoinColumn(name = "id_child"))
+            schema = "public",
+            joinColumns = @JoinColumn(name = "id_sponsor", referencedColumnName = "id_sponsor"),
+            inverseJoinColumns = @JoinColumn(name = "id_child", referencedColumnName = "id_child"))
     private List<ChildModel> childModels = new ArrayList<>();
 }

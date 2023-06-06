@@ -1,10 +1,7 @@
 package com.api.apirest.services;
 
 import com.api.apirest.configurations.MessageProperty;
-import com.api.apirest.dtos.RespChildDto;
-import com.api.apirest.dtos.RespSponsorDto;
-import com.api.apirest.dtos.LoginDto;
-import com.api.apirest.dtos.SponsorDto;
+import com.api.apirest.dtos.*;
 import com.api.apirest.exceptions.handler.BadRequest;
 import com.api.apirest.exceptions.handler.Unauthorized;
 import com.api.apirest.messages.Messages;
@@ -23,8 +20,10 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ApiRestService {
@@ -58,7 +57,7 @@ public class ApiRestService {
         return ResponseEntity.status(HttpStatus.OK).body(messages);
     }
 
-    public ResponseEntity<Object> getSponsor(String externaId) {
+    public ResponseEntity<Object> listSponsor(String externaId) {
         SponsorModel sponsorModel = sponsorRepository.findByExternalId(externaId);
         if(sponsorModel != null) {
             RespSponsorDto respSponsorDto = new RespSponsorDto(
@@ -67,13 +66,9 @@ public class ApiRestService {
 
             return ResponseEntity.status(HttpStatus.OK).body(respSponsorDto);
         }
-        Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.BAD_REQUEST.value());
+        Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.BAD_REQUEST.value());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
-    }
-
-    public List<SponsorModel> getAllSponsors() {
-        return sponsorRepository.findAll();
     }
 
     @Transactional
@@ -145,6 +140,67 @@ public class ApiRestService {
         Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.CREATED.value());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
+    }
+
+    @Transactional
+    public ResponseEntity<Object> updateChild(ChildDto childDto, String externalId) {
+        //Verifica se não existe o externalId
+        if(!childRepository.existsByExternalId(externalId)) {
+            Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.BAD_REQUEST.value());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+        }
+
+        //Faz o update
+        ChildModel childModel = childRepository.findByExternalId(externalId);
+        BeanUtils.copyProperties(childDto, childModel);
+        childModel.setPassword(passwordEncoder(childModel.getPassword()));
+        childRepository.save(childModel);
+        RespChildDto respChildDto = new RespChildDto(
+                childModel.getExternalId(), childModel.getName(), childModel.getNickname(), childModel.getAge()
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(respChildDto);
+    }
+
+    public ResponseEntity<Object> listChild(String externaId) {
+        List<ChildModel> childModels = childRepository.findByUserCreator(externaId);
+        if(childModels != null) {
+            List<RespChildDto> respChildDtoList = new ArrayList<>();
+            childModels.forEach(childModel -> {
+                RespChildDto respChildDto = new RespChildDto(
+                        childModel.getExternalId(),
+                        childModel.getName(),
+                        childModel.getNickname(),
+                        childModel.getAge()
+                );
+                respChildDtoList.add(respChildDto);
+            });
+
+            return ResponseEntity.status(HttpStatus.OK).body(respChildDtoList);
+        }
+        Messages messages = new Messages(messageProperty.getProperty("error.child.notFound"), HttpStatus.BAD_REQUEST.value());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+    }
+
+    @Transactional
+    public  ResponseEntity<Object> deleteChild(String externalId) {
+        ChildModel childModel = childRepository.findByExternalId(externalId);
+        if(childModel != null) {
+            List<SponsorModel> sponsorModels = childModel.getSponsorModels();
+            for (SponsorModel sponsorModel : sponsorModels) {
+                sponsorModel.getChildModels().remove(childModel);
+            }
+            childModel.getSponsorModels().clear();
+            childRepository.delete(childModel);
+            Messages messages = new Messages(messageProperty.getProperty("ok.user.delete"), HttpStatus.OK.value());
+
+            return ResponseEntity.status(HttpStatus.OK).body(messages);
+        }
+        Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.BAD_REQUEST.value());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
     }
 
 

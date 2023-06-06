@@ -4,8 +4,6 @@ import com.api.apirest.models.SponsorModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface SponsorRepository extends JpaRepository<SponsorModel, Long> {
     boolean existsByEmail(String email);
