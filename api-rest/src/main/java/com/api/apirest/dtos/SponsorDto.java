@@ -7,8 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class ApiRestDto {
-
+public class SponsorDto {
     @NotBlank(message = "{error.name.notBlank}")
     @NotNull(message = "{error.name.notNull}")
     @Size(min = 2, max = 30, message = "{error.name.size}")
@@ -16,7 +15,7 @@ public class ApiRestDto {
 
     @NotBlank(message = "{error.email.notBlank}")
     @NotNull(message = "{error.email.notNull}")
-    @Size(min = 2, max = 50, message = "{error.email.size}")
+    @Size(max = 50, message = "{error.email.size}")
     @Email(message = "{error.email.invalid}")
     private String email;
 
