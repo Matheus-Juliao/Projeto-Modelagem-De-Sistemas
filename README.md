@@ -9,6 +9,21 @@ O sistema de gerenciamento de tarefas de crianças, faz o gerenciamento de ativi
 
 ### Cadastro de responsável:
 
+<<<<<<< HEAD
+- O responsável se cadastra na plataforma através do nome e-mail e senha. O reponsável poderá acessar a plataforma por meio de login e senha após efetuar o primeiro cadastro.
+
+### Cadastro de criança:
+
+- O responsável cadastra a criança através de nome completo e idade. Da mesma maneira, esta poderia ser editada e excluída. A criança poderá acessar a plataforma por meio de login e senha após o responsável efetuar o seu cadastro.
+
+### Cadastrar valor mensal total: 
+
+- O responsável entraria no sistema, efetuaria o login e adicionaria um valor mensal de recompensa para cada criança cadastrada, podendo também simplesmente editá-lo ou remove-lo.
+
+### Cadastrar atividade:
+
+- O responsável entraria no sistema, efetuaria o login e criaria a atividade, inserindo o nome, peso em porcentagem e descrição. Da mesma maneira, esta poderia ser editada e excluída. O responsável poderia fazer a confirmação da atividade como realizada no sistema.
+=======
 - O responsável se cadastra na plataforma através do nome e-mail e senha.
 
 - Cadastro das crianças:
@@ -22,6 +37,7 @@ O sistema de gerenciamento de tarefas de crianças, faz o gerenciamento de ativi
 ### Cadastrar atividade:
 
 - O responsável entraria no sistema e criaria a atividade, inserindo o nome, peso em porcentagem e descrição. Da mesma maneira, esta poderia ser editada e excluída. O responsável poderia fazer a confirmação da atividade como realizada no sistema.
+>>>>>>> 499821206a9a671f57c21f0094b1a9fd37839df0
 
 ### Atribuir bônus: 
 
@@ -33,15 +49,29 @@ O sistema de gerenciamento de tarefas de crianças, faz o gerenciamento de ativi
 
 ### Visualização da tarefas:
 
+<<<<<<< HEAD
+- A criança entraria no sistema, efetuaria o login e poderia visualizar as tarefas planejadas pelo responsável.      
+
+### Visualização da recompensa ganha:
+
+- A criança entraria no sistema, efetuaria o login e poderá visualizar o valor ganho pelas atividades realizadas.
+=======
 - A criança poderá visualizar as tarefas planejadas pelo responsável.      
 
 ### Visualização da recompensa ganha:
 
 - A criança poderá visualizar o valor ganho pelas atividades realizadas.
+>>>>>>> 499821206a9a671f57c21f0094b1a9fd37839df0
 
 ## Atores:
 
 - Responsável:
+<<<<<<< HEAD
+    - cadastrar-se
+
+    - cadastrar criança
+=======
+>>>>>>> 499821206a9a671f57c21f0094b1a9fd37839df0
 
     - criar tarefas
 
@@ -64,6 +94,8 @@ O sistema de gerenciamento de tarefas de crianças, faz o gerenciamento de ativi
 - consultar valores ganhos
 
 - consultar lista de tarefas e seus pesos
+<<<<<<< HEAD
+=======
 
 ## Modelo implementado dos pontos no storypoint
 - 1/2: até 2 horas
@@ -74,3 +106,4 @@ O sistema de gerenciamento de tarefas de crianças, faz o gerenciamento de ativi
 - 8: até 1 semana
 - 13: até 2 semanas
 - 20: mais de 2 semanas 
+>>>>>>> 499821206a9a671f57c21f0094b1a9fd37839df0
