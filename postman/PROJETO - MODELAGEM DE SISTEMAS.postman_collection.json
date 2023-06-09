@@ -37,6 +37,36 @@
 			"response": []
 		},
 		{
+			"name": "new task",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"externalIdSponsor\": \"03faf53c-820b-490b-80c9-9b647bfb727e\",\r\n    \"name\": \"Lavar banheiro\",\r\n    \"description\": \"Lavar banheiro utilizando os produtos necessários conforme combinado\",\r\n    \"weight\": 10\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/task/new-task",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"task",
+						"new-task"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "update sponsor",
 			"request": {
 				"method": "PUT",
@@ -230,7 +260,7 @@
 			"response": []
 		},
 		{
-			"name": "delete sponsor Copy",
+			"name": "delete sponsor",
 			"request": {
 				"method": "DELETE",
 				"header": [],
@@ -251,7 +281,7 @@
 			"response": []
 		},
 		{
-			"name": "delete sponsor Copy 2",
+			"name": "delete child",
 			"request": {
 				"method": "DELETE",
 				"header": [],
