@@ -42,4 +42,17 @@ public class SponsorModel implements Serializable {
             joinColumns = @JoinColumn(name = "id_sponsor", referencedColumnName = "id_sponsor"),
             inverseJoinColumns = @JoinColumn(name = "id_child", referencedColumnName = "id_child"))
     private List<ChildModel> childModels = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sponsorModel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TaskModel> tasks = new ArrayList<>();
+
+    public void addTask(TaskModel task) {
+        tasks.add(task);
+        task.setSponsorModel(this);
+    }
+
+    public void removeTask(TaskModel task) {
+        tasks.remove(task);
+        task.setSponsorModel(null);
+    }
 }
