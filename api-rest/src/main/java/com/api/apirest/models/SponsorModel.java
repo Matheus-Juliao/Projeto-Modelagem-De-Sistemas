@@ -36,10 +36,39 @@ public class SponsorModel implements Serializable {
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;
 
+    //Chave estrangeira de Sponsor e Child n:n
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "sponsor_child",
             schema = "public",
             joinColumns = @JoinColumn(name = "id_sponsor", referencedColumnName = "id_sponsor"),
             inverseJoinColumns = @JoinColumn(name = "id_child", referencedColumnName = "id_child"))
     private List<ChildModel> childModels = new ArrayList<>();
+
+    //Ligação da chave estrangeira de task
+    @OneToMany(mappedBy = "sponsorModel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TaskModel> tasks = new ArrayList<>();
+
+    //Ligação da chave estrangeira de Total
+    @OneToMany(mappedBy = "sponsorModel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TotalMonthlyAmountModel> totalModels = new ArrayList<>();
+
+    public void addTask(TaskModel task) {
+        tasks.add(task);
+        task.setSponsorModel(this);
+    }
+
+    public void removeTask(TaskModel task) {
+        tasks.remove(task);
+        task.setSponsorModel(null);
+    }
+
+    public void addTotal(TotalMonthlyAmountModel total) {
+        totalModels.add(total);
+        total.setSponsorModel(this);
+    }
+
+    public void removeTotal(TotalMonthlyAmountModel total) {
+        totalModels.remove(total);
+        total.setSponsorModel(null);
+    }
 }

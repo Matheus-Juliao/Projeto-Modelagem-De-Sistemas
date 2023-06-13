@@ -42,6 +42,21 @@ public class ChildModel implements Serializable {
     @Column(name = "user_creator", nullable = false)
     private String userCreator;
 
+    //Ligação da chave estrangeira de Sponsor
     @ManyToMany(mappedBy = "childModels")
     private List<SponsorModel> sponsorModels = new ArrayList<>();
+
+    //Ligação da chave estrangeira de Total
+    @ManyToMany(mappedBy = "childModel")
+    private List<TotalMonthlyAmountModel> totalModels = new ArrayList<>();
+
+    public void addTotal(TotalMonthlyAmountModel total) {
+        totalModels.add(total);
+        total.setChildModel(this);
+    }
+
+    public void removeTotal(TotalMonthlyAmountModel total) {
+        totalModels.remove(total);
+        total.setChildModel(null);
+    }
 }
