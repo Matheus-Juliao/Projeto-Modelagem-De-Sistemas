@@ -8,28 +8,25 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "TASK")
+@Table(name = "TOTAL_MONTHLY_AMOUNT")
 @Data
-public class TaskModel implements Serializable {
+public class TotalMonthlyAmountModel implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "id_task")
+    @Column(name = "id_total")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idTask;
+    private Long idTotal;
 
     @Column(name = "external_id", length = 45, nullable = false, unique = true)
     private String externalId;
 
-    @Column(nullable = false, length = 50)
-    private String name;
+    @Column(nullable = false)
+    private double total;
 
     @Column(nullable = false)
     private String description;
-
-    @Column(nullable = false)
-    private int weight;
 
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;
@@ -38,4 +35,9 @@ public class TaskModel implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_sponsor", referencedColumnName = "id_sponsor")
     private SponsorModel sponsorModel;
+
+    //Chave estrangeira de Child 1:n
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_child", referencedColumnName = "id_child")
+    private ChildModel childModel;
 }

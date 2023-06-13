@@ -85,7 +85,7 @@ public class ApiController {
     }
 
     @DeleteMapping("delete-sponsor/{externalId}")
-    @Operation(summary = "Delete a sponsor's account", description = "API to delete a sponsor account on the platform")
+    @Operation(summary = "Delete a sponsor", description = "API to delete a sponsor on the platform")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
@@ -140,7 +140,7 @@ public class ApiController {
     }
 
     @DeleteMapping("delete-child/{externalId}")
-    @Operation(summary = "Delete a child's account", description = "API to delete a child account on the platform")
+    @Operation(summary = "Delete a child", description = "API to delete a child on the platform")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
@@ -189,4 +189,45 @@ public class ApiController {
         return apiRestService.createTask(taskModel, taskDto.getExternalIdSponsor());
     }
 
+//    @PutMapping("/update-task/{externalId}")
+//    @Operation(summary = "Update task",  description = "Api for update a task on the platform")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = RespTask.class)) }),
+//            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
+//            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
+//    })
+//    public ResponseEntity<Object> updateTask(@PathVariable String externalId, @RequestBody @Valid ChildDto childDto, @NotNull BindingResult result) throws BadRequest {
+//        if (result.hasErrors()) {
+//            throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
+//        }
+//        return apiRestService.updateChild(childDto, externalId);
+//    }
+
+
+    //TotalMonthlyAmount
+    @PostMapping("/total-monthly-amount/new-total")
+    @Operation(summary = "Register TotalMonthlyAmount",  description = "Api for register a new TotalMonthlyAmount on the platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Created", content =  { @Content(mediaType = "application/json", schema = @Schema(implementation = Messages.class)) }),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public ResponseEntity<Object> createTotal (@RequestBody @Valid TotalDto totalDto, BindingResult result) throws BadRequest {
+        if (result.hasErrors()) {
+            throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
+        }
+
+        return apiRestService.createTotal(totalDto);
+    }
+
+    @DeleteMapping("delete-total-monthly-amount/{externalId}")
+    @Operation(summary = "Delete a total-monthly-amount", description = "API to delete a total-monthly-amount on the platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public ResponseEntity<Object> deleteTotal(@PathVariable String externalId){
+        return apiRestService.deleteTotal(externalId);
+    }
 }
