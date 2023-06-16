@@ -76,7 +76,8 @@ public class ExceptionHandler {
 
         if(exception.getMessage().compareTo(messageProperty.getProperty("error.name.notNull")) == 0
                 || exception.getMessage().compareTo(messageProperty.getProperty("error.name.notBlank")) == 0
-                || exception.getMessage().compareTo(messageProperty.getProperty("error.name.size")) == 0) {
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.name.size")) == 0
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.nameTask.size")) == 0) {
             return "name";
         }
 
@@ -108,6 +109,28 @@ public class ExceptionHandler {
         if(exception.getMessage().compareTo(messageProperty.getProperty("error.externalIdSponsor.notBlank")) == 0
                 || exception.getMessage().compareTo(messageProperty.getProperty("error.externalIdSponsor.notNull")) == 0) {
             return "sponsorExternalId";
+        }
+
+        if(exception.getMessage().compareTo(messageProperty.getProperty("error.weight.notBlank")) == 0
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.weight.notNull")) == 0) {
+            return "weight";
+        }
+
+        if(exception.getMessage().compareTo(messageProperty.getProperty("error.description.notBlank")) == 0
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.description.notNull")) == 0
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.description.size")) == 0) {
+            return "description";
+        }
+
+        if(exception.getMessage().compareTo(messageProperty.getProperty("error.externalIdChild.notBlank")) == 0
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.externalIdChild.notNull")) == 0) {
+            return "externalIdChild";
+        }
+
+        if(exception.getMessage().compareTo(messageProperty.getProperty("error.total.notBlank")) == 0
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.total.notNull")) == 0
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.total.unique")) == 0) {
+            return "total";
         }
 
         return null;

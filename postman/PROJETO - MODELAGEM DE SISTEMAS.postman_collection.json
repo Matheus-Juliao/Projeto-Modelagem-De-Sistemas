@@ -67,6 +67,36 @@
 			"response": []
 		},
 		{
+			"name": "new total monthly amount",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"externalIdSponsor\": \"03faf53c-820b-490b-80c9-9b647bfb727e\",\r\n    \"externalIdChild\": \"d9cd9a14-0138-4e20-807a-eebe8429c4b3\",\r\n    \"total\": 250.50,\r\n    \"description\": \"Mesada da Rebeca \"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/total-monthly-amount/new-total",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"total-monthly-amount",
+						"new-total"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "update sponsor",
 			"request": {
 				"method": "PUT",
@@ -296,6 +326,27 @@
 						"api-rest",
 						"delete-child",
 						"6f63957e-7cdc-47a8-a43b-bd89733bf7ba"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete total monthly amount",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api-rest/delete-total-monthly-amount/e64dde06-980c-43c1-89bc-80eb3983056e",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"delete-total-monthly-amount",
+						"e64dde06-980c-43c1-89bc-80eb3983056e"
 					]
 				}
 			},

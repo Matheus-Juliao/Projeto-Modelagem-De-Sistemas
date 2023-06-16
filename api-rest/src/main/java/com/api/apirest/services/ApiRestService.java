@@ -8,9 +8,11 @@ import com.api.apirest.messages.Messages;
 import com.api.apirest.models.ChildModel;
 import com.api.apirest.models.SponsorModel;
 import com.api.apirest.models.TaskModel;
+import com.api.apirest.models.TotalMonthlyAmountModel;
 import com.api.apirest.repositories.ChildRepository;
 import com.api.apirest.repositories.SponsorRepository;
 import com.api.apirest.repositories.TaskRepository;
+import com.api.apirest.repositories.TotalMonthlyAmountRepository;
 import com.api.apirest.responses.RespChild;
 import com.api.apirest.responses.RespSponsor;
 import com.api.apirest.responses.RespTask;
@@ -25,8 +27,11 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ApiRestService {
@@ -40,6 +45,9 @@ public class ApiRestService {
 
     @Autowired
     TaskRepository taskRepository;
+
+    @Autowired
+    TotalMonthlyAmountRepository totalRepository;
 
     @Autowired
     MessageProperty messageProperty;
@@ -72,9 +80,9 @@ public class ApiRestService {
 
             return ResponseEntity.status(HttpStatus.OK).body(respSponsor);
         }
-        Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.BAD_REQUEST.value());
+        Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.NOT_FOUND.value());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
     }
 
     @Transactional
@@ -86,18 +94,18 @@ public class ApiRestService {
 
             return ResponseEntity.status(HttpStatus.OK).body(messages);
         }
-        Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.BAD_REQUEST.value());
+        Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.NOT_FOUND.value());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
     }
 
     @Transactional
     public ResponseEntity<Object> updateSponsor(SponsorDto sponsorDto, String externalId) {
         //Verifica se não existe o externalId
         if(!sponsorRepository.existsByExternalId(externalId)) {
-            Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.BAD_REQUEST.value());
+            Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.NOT_FOUND.value());
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
         }
 
         //Faz o update
@@ -152,9 +160,9 @@ public class ApiRestService {
     public ResponseEntity<Object> updateChild(ChildDto childDto, String externalId) {
         //Verifica se não existe o externalId
         if(!childRepository.existsByExternalId(externalId)) {
-            Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.BAD_REQUEST.value());
+            Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.NOT_FOUND.value());
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
         }
 
         //Faz o update
@@ -185,9 +193,9 @@ public class ApiRestService {
 
             return ResponseEntity.status(HttpStatus.OK).body(respChildList);
         }
-        Messages messages = new Messages(messageProperty.getProperty("error.child.notFound"), HttpStatus.BAD_REQUEST.value());
+        Messages messages = new Messages(messageProperty.getProperty("error.child.notFound"), HttpStatus.NOT_FOUND.value());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
     }
 
     @Transactional
@@ -204,9 +212,9 @@ public class ApiRestService {
 
             return ResponseEntity.status(HttpStatus.OK).body(messages);
         }
-        Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.BAD_REQUEST.value());
+        Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.NOT_FOUND.value());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
     }
 
 
@@ -280,16 +288,73 @@ public class ApiRestService {
                     taskModel.getExternalId(), taskModel.getName(), taskModel.getDescription(), taskModel.getWeight()
             );
 
-            return ResponseEntity.status(HttpStatus.OK).body(respTask);
+            return ResponseEntity.status(HttpStatus.CREATED).body(respTask);
         } catch (NullPointerException e) {
-            Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.NOT_FOUND.value());
+            Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.NOT_FOUND.value());
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
         }
-        Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.NOT_FOUND.value());
+        Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.NOT_FOUND.value());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
     }
 
+    //TotalMonthlyAmount
+    @Transactional
+    public ResponseEntity<Object> createTotal (TotalDto totalDto) {
+        //Busca a criança com externalId passado
+        ChildModel childModel = childRepository.findByExternalId(totalDto.getExternalIdChild());
+        //Busca o responsável com externalId passado
+        SponsorModel sponsorModel = sponsorRepository.findByExternalId(totalDto.getExternalIdSponsor());
+
+        //Verifica se existe Child
+        if(childModel == null) {
+            Messages messages = new Messages(messageProperty.getProperty("error.child.notFound"), HttpStatus.NOT_FOUND.value());
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
+        }
+        //Verifica se existe Sponsor
+        if(sponsorModel == null) {
+            Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.NOT_FOUND.value());
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
+        }
+        //Verifica se já tem adicionado algum valor total para essa criança
+        if(totalRepository.existsByTotal(childModel.getIdChild())) {
+            Messages messages = new Messages(messageProperty.getProperty("error.total.unique"), HttpStatus.BAD_REQUEST.value());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+        }
+
+        //Manipula os atributos do model
+        TotalMonthlyAmountModel totalModel = new TotalMonthlyAmountModel();
+        BeanUtils.copyProperties(totalDto, totalModel);
+        totalModel.setCreatedDate(LocalDateTime.now(ZoneId.of("UTC")));
+        totalModel.setExternalId(UUID.randomUUID().toString());
+
+        //Adiciona a criança no novo total mensal que está criando
+        childModel.addTotal(totalModel);
+        //Adiciona o responsável no novo total mensal que está criando
+        sponsorModel.addTotal(totalModel);
+        //Salva o total mensal no banco de dados
+        totalRepository.save(totalModel);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(totalDto);
+    }
+
+
+    @Transactional
+    public  ResponseEntity<Object> deleteTotal(String externalId) {
+        TotalMonthlyAmountModel totalModel = totalRepository.findByExternalId(externalId);
+        //Remover
+        if(totalModel != null) {
+            totalModel.getSponsorModel().removeTotal(totalModel);
+            totalModel.getChildModel().removeTotal(totalModel);
+            totalRepository.delete(totalModel);
+            Messages messages = new Messages(messageProperty.getProperty("ok.total.delete"), HttpStatus.OK.value());
+
+            return ResponseEntity.status(HttpStatus.OK).body(messages);
+        }
+        Messages messages = new Messages(messageProperty.getProperty("error.total.notFound"), HttpStatus.NOT_FOUND.value());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+    }
 
     //Criptografia de senha
     public String passwordEncoder(String password) {
