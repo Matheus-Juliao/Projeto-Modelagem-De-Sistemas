@@ -205,8 +205,8 @@ public class ApiController {
 
 
     //TotalMonthlyAmount
-    @PostMapping("/total-monthly-amount/new-total")
-    @Operation(summary = "Register TotalMonthlyAmount",  description = "Api for register a new TotalMonthlyAmount on the platform")
+    @PostMapping("/new-total")
+    @Operation(summary = "Register total monthly amount",  description = "Api for register a new total monthly amount on the platform")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created", content =  { @Content(mediaType = "application/json", schema = @Schema(implementation = Messages.class)) }),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
@@ -220,8 +220,18 @@ public class ApiController {
         return apiRestService.createTotal(totalDto);
     }
 
-    @DeleteMapping("delete-total-monthly-amount/{externalId}")
-    @Operation(summary = "Delete a total-monthly-amount", description = "API to delete a total-monthly-amount on the platform")
+    @GetMapping("/show-total/{externalId}")
+    @Operation(summary = "Returns a total monthly amount", description = "API to fetch a total monthly amount on the platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = RespSponsor.class)) }),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public ResponseEntity<Object> showTotal(@PathVariable String externalId) {
+        return apiRestService.showTotal(externalId);
+    }
+
+    @DeleteMapping("delete-total/{externalId}")
+    @Operation(summary = "Delete a total monthly amount", description = "API to delete a total monthly amount on the platform")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
@@ -230,4 +240,8 @@ public class ApiController {
     public ResponseEntity<Object> deleteTotal(@PathVariable String externalId){
         return apiRestService.deleteTotal(externalId);
     }
+
+    //Penalties
+
+    //Bonus
 }

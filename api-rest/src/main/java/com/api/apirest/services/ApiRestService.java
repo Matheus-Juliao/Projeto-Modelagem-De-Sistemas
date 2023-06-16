@@ -16,6 +16,7 @@ import com.api.apirest.repositories.TotalMonthlyAmountRepository;
 import com.api.apirest.responses.RespChild;
 import com.api.apirest.responses.RespSponsor;
 import com.api.apirest.responses.RespTask;
+import com.api.apirest.responses.RespTotal;
 import com.api.apirest.security.SecurityConfigurations;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
@@ -31,6 +32,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -133,27 +135,31 @@ public class ApiRestService {
             }
             //Se não existir busca o responsável com externalId passado
             SponsorModel sponsorModel = sponsorRepository.findByExternalId(externalIdSponsor);
-            childModel.setUserCreator(externalIdSponsor);
 
-            //verifica se a lista de child models foi inicializada
-            if (sponsorModel.getChildModels() == null) {
-                sponsorModel.setChildModels(new ArrayList<>());
+            if(sponsorModel != null) {
+                childModel.setUserCreator(externalIdSponsor);
+
+                //verifica se a lista de child models foi inicializada
+                if (sponsorModel.getChildModels() == null) {
+                    sponsorModel.setChildModels(new ArrayList<>());
+                }
+                //Grava na tabela auxiliar o id do responsável e o id da criança
+                sponsorModel.getChildModels().add(childModel);
+                childModel.getSponsorModels().add(sponsorModel);
+                //Salva a criança no banco de dados
+                childRepository.save(childModel);
+                Messages messages = new Messages(messageProperty.getProperty("ok.user.registered"), HttpStatus.CREATED.value());
+
+                return ResponseEntity.status(HttpStatus.OK).body(messages);
             }
-            //Grava na tabela auxiliar o id do responsável e o id da criança
-            sponsorModel.getChildModels().add(childModel);
-            childModel.getSponsorModels().add(sponsorModel);
-            //Salva a criança no banco de dados
-            childRepository.save(childModel);
-            Messages messages = new Messages(messageProperty.getProperty("ok.user.registered"), HttpStatus.CREATED.value());
 
-            return ResponseEntity.status(HttpStatus.OK).body(messages);
+            Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.NOT_FOUND.value());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
+
         } catch (NullPointerException e) {
             Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.NOT_FOUND.value());
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
         }
-        Messages messages = new Messages(messageProperty.getProperty("error.externalIdSponsor.notFound"), HttpStatus.NOT_FOUND.value());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
     }
 
     @Transactional
@@ -221,10 +227,8 @@ public class ApiRestService {
     //Login
     @Transactional
     public ResponseEntity<Object> login(@NotNull LoginDto loginDto) {
-
         //Verificar se quem está entrando no sistema é uma criança
         if (loginDto.getIsChild()) {
-
             //Verificar se a criança não está cadastrada no sistema
             if(!childRepository.existsByNickname(loginDto.getUser())) {
                 throw new BadRequest(messageProperty.getProperty("error.nickname.notRegistered"));
@@ -291,11 +295,8 @@ public class ApiRestService {
             return ResponseEntity.status(HttpStatus.CREATED).body(respTask);
         } catch (NullPointerException e) {
             Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.NOT_FOUND.value());
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
+             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
         }
-        Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.NOT_FOUND.value());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
     }
 
     //TotalMonthlyAmount
@@ -309,12 +310,12 @@ public class ApiRestService {
         //Verifica se existe Child
         if(childModel == null) {
             Messages messages = new Messages(messageProperty.getProperty("error.child.notFound"), HttpStatus.NOT_FOUND.value());
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
         }
         //Verifica se existe Sponsor
         if(sponsorModel == null) {
             Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.NOT_FOUND.value());
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
         }
         //Verifica se já tem adicionado algum valor total para essa criança
         if(totalRepository.existsByTotal(childModel.getIdChild())) {
@@ -335,9 +336,54 @@ public class ApiRestService {
         //Salva o total mensal no banco de dados
         totalRepository.save(totalModel);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(totalDto);
+        RespTotal respTotal = new RespTotal(
+                totalModel.getExternalId(),
+                sponsorModel.getExternalId(),
+                childModel.getExternalId(),
+                totalModel.getTotal(),
+                totalModel.getDescription()
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(respTotal);
     }
 
+    @Transactional
+    public ResponseEntity<Object> showTotal(String externaId) {
+        SponsorModel sponsorModel = sponsorRepository.findByExternalId(externaId);
+        if(sponsorModel != null) {
+            TotalMonthlyAmountModel totalModelSponsor = totalRepository.findBySponsorModel(sponsorModel);
+            if(totalModelSponsor != null) {
+                Optional<ChildModel> childModelSponsor = childRepository.findById(totalModelSponsor.getChildModel().getIdChild());
+                RespTotal respTotal = new RespTotal(
+                        totalModelSponsor.getExternalId(),
+                        externaId,
+                        childModelSponsor.get().getExternalId(),
+                        totalModelSponsor.getTotal(),
+                        totalModelSponsor.getDescription()
+                );
+                return ResponseEntity.status(HttpStatus.OK).body(respTotal);
+            }
+        }
+
+        ChildModel childModel = childRepository.findByExternalId(externaId);
+        if(childModel != null) {
+            TotalMonthlyAmountModel totalModelChild = totalRepository.findByChildModel(childModel);
+            if(totalModelChild != null) {
+                Optional<ChildModel> childModelSponsor = childRepository.findById(totalModelChild.getChildModel().getIdChild());
+                RespTotal respTotal = new RespTotal(
+                        totalModelChild.getExternalId(),
+                        externaId,
+                        childModelSponsor.get().getExternalId(),
+                        totalModelChild.getTotal(),
+                        totalModelChild.getDescription()
+                );
+                return ResponseEntity.status(HttpStatus.OK).body(respTotal);
+            }
+        }
+        Messages messages = new Messages(messageProperty.getProperty("error.total.notFound"), HttpStatus.NOT_FOUND.value());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
+    }
 
     @Transactional
     public  ResponseEntity<Object> deleteTotal(String externalId) {
