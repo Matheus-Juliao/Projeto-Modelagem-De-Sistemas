@@ -5,14 +5,8 @@ import com.api.apirest.dtos.*;
 import com.api.apirest.exceptions.handler.BadRequest;
 import com.api.apirest.exceptions.handler.Unauthorized;
 import com.api.apirest.messages.Messages;
-import com.api.apirest.models.ChildModel;
-import com.api.apirest.models.SponsorModel;
-import com.api.apirest.models.TaskModel;
-import com.api.apirest.models.TotalMonthlyAmountModel;
-import com.api.apirest.repositories.ChildRepository;
-import com.api.apirest.repositories.SponsorRepository;
-import com.api.apirest.repositories.TaskRepository;
-import com.api.apirest.repositories.TotalMonthlyAmountRepository;
+import com.api.apirest.models.*;
+import com.api.apirest.repositories.*;
 import com.api.apirest.responses.RespChild;
 import com.api.apirest.responses.RespSponsor;
 import com.api.apirest.responses.RespTask;
@@ -28,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -50,6 +45,12 @@ public class ApiRestService {
 
     @Autowired
     TotalMonthlyAmountRepository totalRepository;
+
+    @Autowired
+    BonusRepository bonusRepository;
+
+    @Autowired
+    PenaltyRepository penaltyRepository;
 
     @Autowired
     MessageProperty messageProperty;
@@ -278,27 +279,6 @@ public class ApiRestService {
     }
 
 
-    //Task
-    @Transactional
-    public ResponseEntity<Object> createTask (TaskModel taskModel, String externalIdSponsor) {
-        try {
-            //Busca o responsável com externalId passado
-            SponsorModel sponsorModel = sponsorRepository.findByExternalId(externalIdSponsor);
-            //Adiciona a nova tarefa ao Sponsor que está criando
-            sponsorModel.addTask(taskModel);
-            //Salva a criança no banco de dados
-            taskRepository.save(taskModel);
-            RespTask respTask = new RespTask(
-                    taskModel.getExternalId(), taskModel.getName(), taskModel.getDescription(), taskModel.getWeight()
-            );
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(respTask);
-        } catch (NullPointerException e) {
-            Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.NOT_FOUND.value());
-             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
-        }
-    }
-
     //TotalMonthlyAmount
     @Transactional
     public ResponseEntity<Object> createTotal (TotalDto totalDto) {
@@ -322,7 +302,6 @@ public class ApiRestService {
             Messages messages = new Messages(messageProperty.getProperty("error.total.unique"), HttpStatus.BAD_REQUEST.value());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
         }
-
         //Manipula os atributos do model
         TotalMonthlyAmountModel totalModel = new TotalMonthlyAmountModel();
         BeanUtils.copyProperties(totalDto, totalModel);
@@ -401,6 +380,120 @@ public class ApiRestService {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
     }
+
+
+    //Bonus
+    @Transactional
+    public ResponseEntity<Object> applyBonus(BonusDto bonusDto) {
+        SponsorModel sponsorModel = sponsorRepository.findByExternalId(bonusDto.getExternalIdSponsor());
+        if(sponsorModel != null) {
+            TotalMonthlyAmountModel totaModel = totalRepository.findByExternalId(bonusDto.getExternalIdTotal());
+            if(totaModel != null) {
+                Optional<ChildModel> childModelSponsor = childRepository.findById(totaModel.getChildModel().getIdChild());
+                //Manipula os atributos do model
+                BonusModel bonusModel = new BonusModel();
+                BeanUtils.copyProperties(bonusDto, bonusModel);
+                bonusModel.setCreatedDate(LocalDateTime.now(ZoneId.of("UTC")));
+                bonusModel.setExternalId(UUID.randomUUID().toString());
+
+                //Adiciona o responsável no novo bônus mensal que está criando
+                sponsorModel.addBonus(bonusModel);
+
+                //Salva o bônus no banco de dados
+                bonusRepository.save(bonusModel);
+
+                //Atualiza o valor no total
+                BigDecimal result = BigDecimal.valueOf(totaModel.getTotal()).add(BigDecimal.valueOf(bonusModel.getBonus()));
+                result = result.setScale(2, BigDecimal.ROUND_HALF_UP);
+                totaModel.setTotal(result.doubleValue());
+                totalRepository.save(totaModel);
+
+                RespTotal respTotal = new RespTotal(
+                        totaModel.getExternalId(),
+                        sponsorModel.getExternalId(),
+                        childModelSponsor.get().getExternalId(),
+                        result.doubleValue(),
+                        totaModel.getDescription()
+                );
+
+                return ResponseEntity.status(HttpStatus.CREATED).body(respTotal);
+            }
+            Messages messages = new Messages(messageProperty.getProperty("error.total.notFound"), HttpStatus.NOT_FOUND.value());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+        }
+        Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.NOT_FOUND.value());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+    }
+
+
+    //Penalties
+    @Transactional
+    public ResponseEntity<Object> applyPenalty(PenaltyDto penaltyDto) {
+        SponsorModel sponsorModel = sponsorRepository.findByExternalId(penaltyDto.getExternalIdSponsor());
+        if(sponsorModel != null) {
+            TotalMonthlyAmountModel totaModel = totalRepository.findByExternalId(penaltyDto.getExternalIdTotal());
+            if(totaModel != null) {
+                Optional<ChildModel> childModelSponsor = childRepository.findById(totaModel.getChildModel().getIdChild());
+                //Manipula os atributos do model
+                PenaltyModel penaltyModel = new PenaltyModel();
+                BeanUtils.copyProperties(penaltyDto, penaltyModel);
+                penaltyModel.setCreatedDate(LocalDateTime.now(ZoneId.of("UTC")));
+                penaltyModel.setExternalId(UUID.randomUUID().toString());
+
+                //Adiciona o responsável na nova penalidade mensal que está criando
+                sponsorModel.addPenalty(penaltyModel);
+
+                //Salva a penalidade no banco de dados
+                penaltyRepository.save(penaltyModel);
+
+                //Atualiza o valor no total
+                double result = totaModel.getTotal() - penaltyModel.getPenalty();
+                totaModel.setTotal(result);
+                totalRepository.save(totaModel);
+
+                RespTotal respTotal = new RespTotal(
+                        totaModel.getExternalId(),
+                        sponsorModel.getExternalId(),
+                        childModelSponsor.get().getExternalId(),
+                        result,
+                        totaModel.getDescription()
+                );
+
+                return ResponseEntity.status(HttpStatus.CREATED).body(respTotal);
+            }
+            Messages messages = new Messages(messageProperty.getProperty("error.total.notFound"), HttpStatus.NOT_FOUND.value());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+        }
+        Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.NOT_FOUND.value());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+    }
+
+
+    //Task
+    @Transactional
+    public ResponseEntity<Object> createTask (TaskModel taskModel, String externalIdSponsor) {
+        try {
+            //Busca o responsável com externalId passado
+            SponsorModel sponsorModel = sponsorRepository.findByExternalId(externalIdSponsor);
+            //Adiciona a nova tarefa ao Sponsor que está criando
+            sponsorModel.addTask(taskModel);
+            //Salva a criança no banco de dados
+            taskRepository.save(taskModel);
+            RespTask respTask = new RespTask(
+                    taskModel.getExternalId(), taskModel.getName(), taskModel.getDescription(), taskModel.getWeight()
+            );
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(respTask);
+        } catch (NullPointerException e) {
+            Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.NOT_FOUND.value());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
+        }
+    }
+
 
     //Criptografia de senha
     public String passwordEncoder(String password) {

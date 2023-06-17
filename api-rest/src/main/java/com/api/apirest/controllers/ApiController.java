@@ -6,8 +6,10 @@ import com.api.apirest.messages.Messages;
 import com.api.apirest.models.ChildModel;
 import com.api.apirest.models.SponsorModel;
 import com.api.apirest.models.TaskModel;
+import com.api.apirest.responses.RespChild;
 import com.api.apirest.responses.RespSponsor;
 import com.api.apirest.responses.RespTask;
+import com.api.apirest.responses.RespTotal;
 import com.api.apirest.services.ApiRestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -167,6 +169,78 @@ public class ApiController {
     }
 
 
+    //TotalMonthlyAmount
+    @PostMapping("/new-total")
+    @Operation(summary = "Register total monthly amount",  description = "Api for register a new total monthly amount on the platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Created", content =  { @Content(mediaType = "application/json", schema = @Schema(implementation = RespTotal.class)) }),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public ResponseEntity<Object> createTotal (@RequestBody @Valid TotalDto totalDto, BindingResult result) throws BadRequest {
+        if (result.hasErrors()) {
+            throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
+        }
+
+        return apiRestService.createTotal(totalDto);
+    }
+
+    @GetMapping("/show-total/{externalId}")
+    @Operation(summary = "Returns a total monthly amount", description = "API to fetch a total monthly amount on the platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = RespTotal.class)) }),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public ResponseEntity<Object> showTotal(@PathVariable String externalId) {
+        return apiRestService.showTotal(externalId);
+    }
+
+    @DeleteMapping("delete-total/{externalId}")
+    @Operation(summary = "Delete a total monthly amount", description = "API to delete a total monthly amount on the platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public ResponseEntity<Object> deleteTotal(@PathVariable String externalId){
+        return apiRestService.deleteTotal(externalId);
+    }
+
+
+    //Bonus
+    @PostMapping("/apply-bonus")
+    @Operation(summary = "Apply bonus",  description = "Api for apply bonus in total on the platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Created", content =  { @Content(mediaType = "application/json", schema = @Schema(implementation = RespTotal.class)) }),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public ResponseEntity<Object> applyBonus (@RequestBody @Valid BonusDto bonusDto, BindingResult result) throws BadRequest {
+        if (result.hasErrors()) {
+            throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
+        }
+
+        return apiRestService.applyBonus(bonusDto);
+    }
+
+
+    //Penalty
+    @PostMapping("/apply-penalty")
+    @Operation(summary = "Apply penalty",  description = "Api for apply penalty in total on the platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Created", content =  { @Content(mediaType = "application/json", schema = @Schema(implementation = RespTotal.class)) }),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public ResponseEntity<Object> applyPenalty (@RequestBody @Valid PenaltyDto penaltyDto, BindingResult result) throws BadRequest {
+        if (result.hasErrors()) {
+            throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
+        }
+
+        return apiRestService.applyPenalty(penaltyDto);
+    }
+
+
     //Task
     @PostMapping("task/new-task")
     @Operation(summary = "Register new task",  description = "Api for register an new task on the platform")
@@ -202,46 +276,4 @@ public class ApiController {
 //        }
 //        return apiRestService.updateChild(childDto, externalId);
 //    }
-
-
-    //TotalMonthlyAmount
-    @PostMapping("/new-total")
-    @Operation(summary = "Register total monthly amount",  description = "Api for register a new total monthly amount on the platform")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Created", content =  { @Content(mediaType = "application/json", schema = @Schema(implementation = Messages.class)) }),
-            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
-    })
-    public ResponseEntity<Object> createTotal (@RequestBody @Valid TotalDto totalDto, BindingResult result) throws BadRequest {
-        if (result.hasErrors()) {
-            throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
-        }
-
-        return apiRestService.createTotal(totalDto);
-    }
-
-    @GetMapping("/show-total/{externalId}")
-    @Operation(summary = "Returns a total monthly amount", description = "API to fetch a total monthly amount on the platform")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = RespSponsor.class)) }),
-            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true)))
-    })
-    public ResponseEntity<Object> showTotal(@PathVariable String externalId) {
-        return apiRestService.showTotal(externalId);
-    }
-
-    @DeleteMapping("delete-total/{externalId}")
-    @Operation(summary = "Delete a total monthly amount", description = "API to delete a total monthly amount on the platform")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(hidden = true))),
-            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
-    })
-    public ResponseEntity<Object> deleteTotal(@PathVariable String externalId){
-        return apiRestService.deleteTotal(externalId);
-    }
-
-    //Penalties
-
-    //Bonus
 }

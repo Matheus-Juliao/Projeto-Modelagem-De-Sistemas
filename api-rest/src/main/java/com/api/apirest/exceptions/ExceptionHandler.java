@@ -129,8 +129,20 @@ public class ExceptionHandler {
 
         if(exception.getMessage().compareTo(messageProperty.getProperty("error.total.notBlank")) == 0
                 || exception.getMessage().compareTo(messageProperty.getProperty("error.total.notNull")) == 0
-                || exception.getMessage().compareTo(messageProperty.getProperty("error.total.unique")) == 0) {
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.total.unique")) == 0
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.externalIdTotal.notBlank")) == 0
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.externalIdTotal.notNull")) == 0) {
             return "total";
+        }
+
+        if(exception.getMessage().compareTo(messageProperty.getProperty("error.bonus.notNull")) == 0
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.bonus.notBlank")) == 0) {
+            return "bonus";
+        }
+
+        if(exception.getMessage().compareTo(messageProperty.getProperty("error.penalties.notNull")) == 0
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.penalties.notBlank")) == 0) {
+            return "penalties";
         }
 
         return null;
