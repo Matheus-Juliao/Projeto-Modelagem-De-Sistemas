@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "c05efb0f-c5e4-4502-b2b3-d0969e41e750",
+		"_postman_id": "b567972e-193d-4982-ad40-f5d53b9a1a89",
 		"name": "PROJETO - MODELAGEM DE SISTEMAS",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "21171850"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -37,21 +36,12 @@
 			"response": []
 		},
 		{
-			"name": "new task",
+			"name": "list sponsor",
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"externalIdSponsor\": \"03faf53c-820b-490b-80c9-9b647bfb727e\",\r\n    \"name\": \"Lavar banheiro\",\r\n    \"description\": \"Lavar banheiro utilizando os produtos necessários conforme combinado\",\r\n    \"weight\": 10\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
-					"raw": "http://localhost:8080/api-rest/task/new-task",
+					"raw": "http://localhost:8080/api-rest/list-sponsor/7e327404-1b0e-4dc6-85d7-120269568d5d",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -59,38 +49,8 @@
 					"port": "8080",
 					"path": [
 						"api-rest",
-						"task",
-						"new-task"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "new total monthly amount",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"externalIdSponsor\": \"03faf53c-820b-490b-80c9-9b647bfb727e\",\r\n    \"externalIdChild\": \"d9cd9a14-0138-4e20-807a-eebe8429c4b3\",\r\n    \"total\": 250.50,\r\n    \"description\": \"Mesada da Rebeca \"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8080/api-rest/total-monthly-amount/new-total",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api-rest",
-						"total-monthly-amount",
-						"new-total"
+						"list-sponsor",
+						"7e327404-1b0e-4dc6-85d7-120269568d5d"
 					]
 				}
 			},
@@ -127,21 +87,12 @@
 			"response": []
 		},
 		{
-			"name": "update child",
+			"name": "delete sponsor",
 			"request": {
-				"method": "PUT",
+				"method": "DELETE",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"externalIdSponsor\": \"03faf53c-820b-490b-80c9-9b647bfb727e\",\r\n    \"name\": \"Isaque Julião\",\r\n    \"nickname\": \"Issac08\",\r\n    \"age\": 8,\r\n    \"password\": \"test123\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
-					"raw": "http://localhost:8080/api-rest/update-child/6f63957e-7cdc-47a8-a43b-bd89733bf7ba",
+					"raw": "http://localhost:8080/api-rest/delete-sponsor/ebbf8f94-c8f2-4677-a250-499ecf7d8257",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -149,8 +100,8 @@
 					"port": "8080",
 					"path": [
 						"api-rest",
-						"update-child",
-						"6f63957e-7cdc-47a8-a43b-bd89733bf7ba"
+						"delete-sponsor",
+						"ebbf8f94-c8f2-4677-a250-499ecf7d8257"
 					]
 				}
 			},
@@ -163,7 +114,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"externalIdSponsor\": \"03faf53c-820b-490b-80c9-9b647bfb727e\",\r\n    \"name\": \"Issac Julião\",\r\n    \"nickname\": \"Issac08\",\r\n    \"age\": 8,\r\n    \"password\": \"test123\"\r\n}",
+					"raw": "{\r\n    \"externalIdSponsor\": \"7e327404-1b0e-4dc6-85d7-120269568d5\",\r\n    \"name\": \"Issac Julião\",\r\n    \"nickname\": \"Issac0\",\r\n    \"age\": 8,\r\n    \"password\": \"test123\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -181,6 +132,81 @@
 						"api-rest",
 						"child",
 						"new-register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list all child of sponsor",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api-rest/listAllChild/7e327404-1b0e-4dc6-85d7-120269568d5d",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"listAllChild",
+						"7e327404-1b0e-4dc6-85d7-120269568d5d"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update child",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"externalIdSponsor\": \"03faf53c-820b-490b-80c9-9b647bfb727e\",\r\n    \"name\": \"Isaque Julião\",\r\n    \"nickname\": \"Isaac08\",\r\n    \"age\": 8,\r\n    \"password\": \"test123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/update-child/201b70c0-4026-424c-a52c-e0fa84161494",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"update-child",
+						"201b70c0-4026-424c-a52c-e0fa84161494"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete child",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api-rest/delete-child/6f63957e-7cdc-47a8-a43b-bd89733bf7ba",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"delete-child",
+						"6f63957e-7cdc-47a8-a43b-bd89733bf7ba"
 					]
 				}
 			},
@@ -216,13 +242,13 @@
 			"response": []
 		},
 		{
-			"name": "login sponsor child",
+			"name": "login child",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"user\": \"rebeca10\",\r\n    \"password\": \"test123\",\r\n    \"isChild\": true\r\n}",
+					"raw": "{\r\n    \"user\": \"Isaac08\",\r\n    \"password\": \"test123\",\r\n    \"isChild\": true\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -245,7 +271,36 @@
 			"response": []
 		},
 		{
-			"name": "list all child of sponsor",
+			"name": "new total monthly amount",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"externalIdSponsor\": \"7e327404-1b0e-4dc6-85d7-120269568d5d\",\r\n    \"externalIdChild\": \"201b70c0-4026-424c-a52c-e0fa84161494\",\r\n    \"total\": 250.50,\r\n    \"description\": \"Mesada do Isaac\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/new-total",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"new-total"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "show total monthly amount",
 			"request": {
 				"auth": {
 					"type": "noauth"
@@ -253,7 +308,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api-rest/listAllChild/03faf53c-820b-490b-80c9-9b647bfb727e",
+					"raw": "http://localhost:8080/api-rest/show-total/7e327404-1b0e-4dc6-85d7-120269568d5d",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -261,71 +316,8 @@
 					"port": "8080",
 					"path": [
 						"api-rest",
-						"listAllChild",
-						"03faf53c-820b-490b-80c9-9b647bfb727e"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "list sponsor",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/api-rest/list-sponsor/03faf53c-820b-490b-80c9-9b647bfb727e",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api-rest",
-						"list-sponsor",
-						"03faf53c-820b-490b-80c9-9b647bfb727e"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "delete sponsor",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/api-rest/delete-sponsor/ebbf8f94-c8f2-4677-a250-499ecf7d8257",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api-rest",
-						"delete-sponsor",
-						"ebbf8f94-c8f2-4677-a250-499ecf7d8257"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "delete child",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/api-rest/delete-child/6f63957e-7cdc-47a8-a43b-bd89733bf7ba",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api-rest",
-						"delete-child",
-						"6f63957e-7cdc-47a8-a43b-bd89733bf7ba"
+						"show-total",
+						"7e327404-1b0e-4dc6-85d7-120269568d5d"
 					]
 				}
 			},
@@ -337,7 +329,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api-rest/delete-total-monthly-amount/e64dde06-980c-43c1-89bc-80eb3983056e",
+					"raw": "http://localhost:8080/api-rest/delete-total/e1f96143-424e-413a-b735-8fa2d426bf17",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -345,8 +337,96 @@
 					"port": "8080",
 					"path": [
 						"api-rest",
-						"delete-total-monthly-amount",
-						"e64dde06-980c-43c1-89bc-80eb3983056e"
+						"delete-total",
+						"e1f96143-424e-413a-b735-8fa2d426bf17"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "apply bonus total",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"externalIdSponsor\": \"7e327404-1b0e-4dc6-85d7-120269568d5d\",\r\n    \"externalIdTotal\": \"47ee77a6-0e13-4631-b9fd-e138a1e28209\",\r\n    \"bonus\": 10.50\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/apply-bonus",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"apply-bonus"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "apply bonus total Copy",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"externalIdSponsor\": \"7e327404-1b0e-4dc6-85d7-120269568d5d\",\r\n    \"externalIdTotal\": \"47ee77a6-0e13-4631-b9fd-e138a1e28209\",\r\n    \"penalty\": 10.50\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/apply-penalty",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"apply-penalty"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "new task",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"externalIdSponsor\": \"03faf53c-820b-490b-80c9-9b647bfb727e\",\r\n    \"name\": \"Lavar banheiro\",\r\n    \"description\": \"Lavar banheiro utilizando os produtos necessários conforme combinado\",\r\n    \"weight\": 10\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/task/new-task",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"task",
+						"new-task"
 					]
 				}
 			},

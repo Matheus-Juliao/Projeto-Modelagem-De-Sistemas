@@ -42,7 +42,7 @@ public class ChildModel implements Serializable {
     @Column(name = "user_creator", nullable = false)
     private String userCreator;
 
-    //Ligação da chave estrangeira de Sponsor
+    //Ligação da chave estrangeira de Responsável
     @ManyToMany(mappedBy = "childModels")
     private List<SponsorModel> sponsorModels = new ArrayList<>();
 
