@@ -39,7 +39,7 @@ class ApiRestApplicationTests {
         SponsorModel sponsorModel = new SponsorModel();
         sponsorModel.setPassword("123");
         sponsorModel.setEmail("test@example.com");
-        sponsorModel.setName("Test Sponsor");
+        sponsorModel.setName("Test Sponsor...");
 
         when(sponsorRepository.existsByEmail(sponsorModel.getEmail())).thenReturn(false);
 
