@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -309,6 +310,7 @@ public class ApiRestService {
         BeanUtils.copyProperties(totalDto, totalModel);
         totalModel.setCreatedDate(LocalDateTime.now(ZoneId.of("UTC")));
         totalModel.setExternalId(UUID.randomUUID().toString());
+        totalModel.setRemainder(totalModel.getTotal());
 
         //Adiciona a criança no novo total mensal que está criando
         childModel.addTotal(totalModel);
@@ -322,6 +324,7 @@ public class ApiRestService {
                 sponsorModel.getExternalId(),
                 childModel.getExternalId(),
                 totalModel.getTotal(),
+                totalModel.getRemainder(),
                 totalModel.getDescription()
         );
 
@@ -340,6 +343,7 @@ public class ApiRestService {
                         externaId,
                         childModelSponsor.get().getExternalId(),
                         totalModelSponsor.getTotal(),
+                        totalModelSponsor.getRemainder(),
                         totalModelSponsor.getDescription()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(respTotal);
@@ -356,6 +360,7 @@ public class ApiRestService {
                         externaId,
                         childModelSponsor.get().getExternalId(),
                         totalModelChild.getTotal(),
+                        totalModelChild.getRemainder(),
                         totalModelChild.getDescription()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(respTotal);
@@ -371,6 +376,11 @@ public class ApiRestService {
         TotalMonthlyAmountModel totalModel = totalRepository.findByExternalId(externalId);
         //Remover
         if(totalModel != null) {
+            if(taskRepository.existsByTotalModel(totalModel)) {
+                Messages messages = new Messages(messageProperty.getProperty("error.task.delete"), HttpStatus.BAD_REQUEST.value());
+
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+            }
             totalModel.getSponsorModel().removeTotal(totalModel);
             totalModel.getChildModel().removeTotal(totalModel);
             totalRepository.delete(totalModel);
@@ -380,7 +390,7 @@ public class ApiRestService {
         }
         Messages messages = new Messages(messageProperty.getProperty("error.total.notFound"), HttpStatus.NOT_FOUND.value());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
     }
 
 
@@ -398,23 +408,36 @@ public class ApiRestService {
                 bonusModel.setCreatedDate(LocalDateTime.now(ZoneId.of("UTC")));
                 bonusModel.setExternalId(UUID.randomUUID().toString());
 
+                //Atualiza o valor no total
+                BigDecimal getTotal = new BigDecimal(totaModel.getTotal());
+                BigDecimal bonusWeigth = new BigDecimal(bonusModel.getBonusWeigth());
+                BigDecimal divisor = new BigDecimal("100.0");
+                BigDecimal getRemainder = new BigDecimal(totaModel.getRemainder());
+                BigDecimal valueBonus = getTotal.multiply(bonusWeigth.divide(divisor));
+                BigDecimal total = getTotal.add(valueBonus);
+                total = total.setScale(2, RoundingMode.HALF_EVEN);
+                totaModel.setTotal(total.doubleValue());
+                valueBonus = valueBonus.setScale(2, RoundingMode.HALF_EVEN);
+
+                //Atualiza o valor do remainder
+                BigDecimal remainder = getRemainder.add(valueBonus);
+                remainder = remainder.setScale(2, RoundingMode.HALF_EVEN);
+                totaModel.setRemainder(remainder.doubleValue());
+
                 //Adiciona o responsável no novo bônus mensal que está criando
                 sponsorModel.addBonus(bonusModel);
-
                 //Salva o bônus no banco de dados
                 bonusRepository.save(bonusModel);
-
-                //Atualiza o valor no total
-                BigDecimal result = BigDecimal.valueOf(totaModel.getTotal()).add(BigDecimal.valueOf(bonusModel.getBonus()));
-                result = result.setScale(2, BigDecimal.ROUND_HALF_UP);
-                totaModel.setTotal(result.doubleValue());
+                //Salva o total atualizado no banco de dados
                 totalRepository.save(totaModel);
 
                 RespTotal respTotal = new RespTotal(
                         totaModel.getExternalId(),
                         sponsorModel.getExternalId(),
                         childModelSponsor.get().getExternalId(),
-                        result.doubleValue(),
+                        total.doubleValue(),
+                        valueBonus.doubleValue(),
+                        remainder.doubleValue(),
                         totaModel.getDescription()
                 );
 
@@ -422,11 +445,11 @@ public class ApiRestService {
             }
             Messages messages = new Messages(messageProperty.getProperty("error.total.notFound"), HttpStatus.NOT_FOUND.value());
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
         }
         Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.NOT_FOUND.value());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
     }
 
 
@@ -444,22 +467,42 @@ public class ApiRestService {
                 penaltyModel.setCreatedDate(LocalDateTime.now(ZoneId.of("UTC")));
                 penaltyModel.setExternalId(UUID.randomUUID().toString());
 
+                //Atualiza o valor no total
+                BigDecimal getTotal = new BigDecimal(totaModel.getTotal());
+                BigDecimal penaltyWeigth =  new BigDecimal(penaltyModel.getPenaltyWeigth());
+                BigDecimal divisor = new BigDecimal("100.0");
+                BigDecimal getRemainder = new BigDecimal(totaModel.getRemainder());
+                BigDecimal valuePenalty = getTotal.multiply(penaltyWeigth.divide(divisor));
+
+                if(valuePenalty.doubleValue() > getRemainder.doubleValue()) {
+                    Messages messages = new Messages(messageProperty.getProperty("error.penalty.addTask"), HttpStatus.BAD_REQUEST.value());
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+                }
+
+                BigDecimal total = getTotal.subtract(valuePenalty);
+                total = total.setScale(2, RoundingMode.HALF_EVEN);
+                totaModel.setTotal(total.doubleValue());
+                valuePenalty = valuePenalty.setScale(2, RoundingMode.HALF_EVEN);
+
+                //Atualiza o valor do remainder
+                BigDecimal remainder = getRemainder.subtract(valuePenalty);
+                remainder = remainder.setScale(2, RoundingMode.HALF_EVEN);
+                totaModel.setRemainder(remainder.doubleValue());
+
                 //Adiciona o responsável na nova penalidade mensal que está criando
                 sponsorModel.addPenalty(penaltyModel);
-
                 //Salva a penalidade no banco de dados
                 penaltyRepository.save(penaltyModel);
-
-                //Atualiza o valor no total
-                double result = totaModel.getTotal() - penaltyModel.getPenalty();
-                totaModel.setTotal(result);
+                //Salva o total no banco de dados
                 totalRepository.save(totaModel);
 
                 RespTotal respTotal = new RespTotal(
                         totaModel.getExternalId(),
                         sponsorModel.getExternalId(),
                         childModelSponsor.get().getExternalId(),
-                        result,
+                        total.doubleValue(),
+                        valuePenalty.doubleValue(),
+                        remainder.doubleValue(),
                         totaModel.getDescription()
                 );
 
@@ -467,33 +510,198 @@ public class ApiRestService {
             }
             Messages messages = new Messages(messageProperty.getProperty("error.total.notFound"), HttpStatus.NOT_FOUND.value());
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
         }
         Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.NOT_FOUND.value());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
     }
 
 
     //Task
     @Transactional
-    public ResponseEntity<Object> createTask (TaskModel taskModel, String externalIdSponsor) {
-        try {
+    public ResponseEntity<Object> createTask (TaskDto taskDto) {
             //Busca o responsável com externalId passado
-            SponsorModel sponsorModel = sponsorRepository.findByExternalId(externalIdSponsor);
-            //Adiciona a nova tarefa ao Sponsor que está criando
-            sponsorModel.addTask(taskModel);
-            //Salva a criança no banco de dados
+            SponsorModel sponsorModel = sponsorRepository.findByExternalId(taskDto.getExternalIdSponsor());
+            if(sponsorModel != null) {
+                //Busca a criança com externalId passado
+                ChildModel childModel = childRepository.findByExternalId(taskDto.getExternalIdChild());
+                if(childModel != null) {
+                    //Buasca a tarefa com externalId passado
+                    TotalMonthlyAmountModel totalModel = totalRepository.findByExternalId(taskDto.getExternalIdTotal());
+                    if(totalModel != null) {
+                        //Manipula os atributos do model
+                        TaskModel taskModel = new TaskModel();
+                        BeanUtils.copyProperties(taskDto, taskModel);
+                        taskModel.setCreatedDate(LocalDateTime.now(ZoneId.of("UTC")));
+                        taskModel.setExternalId(UUID.randomUUID().toString());
+
+                        //Fazer o cálculo para saber o restante em cima do total
+                        BigDecimal weight = new BigDecimal(taskModel.getWeight());
+                        BigDecimal divisor = new BigDecimal("100.0");
+                        BigDecimal total = new BigDecimal(totalModel.getTotal());
+                        BigDecimal valueTask = weight.divide(divisor, 2, RoundingMode.HALF_UP).multiply(total);
+
+                        //Se o peso for menor que o valor total
+                        if(valueTask.doubleValue() > totalModel.getRemainder()) {
+                            BigDecimal remainder = new BigDecimal(totalModel.getRemainder());
+
+                            BigDecimal weightRemainder = remainder.multiply(divisor).divide(total, 2, RoundingMode.HALF_UP);
+                            Messages messages = new Messages(messageProperty.getProperty("error.createTask.value") + weightRemainder, HttpStatus.BAD_REQUEST.value());
+
+                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+                        }
+                        BigDecimal remainder  = new BigDecimal(totalModel.getRemainder()).subtract(valueTask);
+                        remainder = remainder.setScale(2, RoundingMode.HALF_EVEN);
+                        totalModel.setRemainder(remainder.doubleValue());
+                        valueTask = valueTask.setScale(2, RoundingMode.HALF_EVEN);
+                        taskModel.setValue(valueTask.doubleValue());
+
+                        //Adiciona a nova tarefa ao Sponsor
+                        sponsorModel.addTask(taskModel);
+                        //Adiciona a nova tarefa a Child
+                        childModel.addTask(taskModel);
+                        //Adiciona a nova tarefa ao total
+                        totalModel.addTask(taskModel);
+                        //Edita o total com o valor do remainder atualizado
+                        totalRepository.save(totalModel);
+                        //Salva a tarefa no banco de dados
+                        taskRepository.save(taskModel);
+
+                        //Prepara a resposta
+                        RespTask respTask = new RespTask(
+                                taskModel.getExternalId(),
+                                taskModel.getSponsorModel().getExternalId(),
+                                taskModel.getChildModel().getExternalId(),
+                                taskModel.getTotalModel().getExternalId(),
+                                taskModel.getName(),
+                                taskModel.getDescription(),
+                                taskModel.getWeight(),
+                                valueTask.doubleValue(),
+                                taskModel.isComplete(),
+                                totalModel.getRemainder()
+                        );
+
+                        return ResponseEntity.status(HttpStatus.CREATED).body(respTask);
+                    }
+                    Messages messages = new Messages(messageProperty.getProperty("error.total.notFound"), HttpStatus.NOT_FOUND.value());
+
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+                }
+                Messages messages = new Messages(messageProperty.getProperty("error.child.notFound"), HttpStatus.NOT_FOUND.value());
+
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+            }
+            Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.NOT_FOUND.value());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+    }
+
+    @Transactional
+    public ResponseEntity<Object> listTask(String externaId) {
+        SponsorModel sponsorModel = sponsorRepository.findByExternalId(externaId);
+        if(sponsorModel != null) {
+            List<TaskModel> taskModels = taskRepository.findBySponsorModel(sponsorModel);
+            List<RespTask> respTasksList = new ArrayList<>();
+            taskModels.forEach(taskModel -> {
+                RespTask respTask = new RespTask(
+                        taskModel.getExternalId(),
+                        taskModel.getSponsorModel().getExternalId(),
+                        taskModel.getChildModel().getExternalId(),
+                        taskModel.getTotalModel().getExternalId(),
+                        taskModel.getName(),
+                        taskModel.getDescription(),
+                        taskModel.getWeight(),
+                        taskModel.getValue(),
+                        taskModel.isComplete(),
+                        taskModel.getTotalModel().getRemainder()
+                );
+                respTasksList.add(respTask);
+            });
+
+            return ResponseEntity.status(HttpStatus.OK).body(respTasksList);
+        }
+
+        ChildModel childModel = childRepository.findByExternalId(externaId);
+        if(childModel != null) {
+            List<TaskModel> taskModels = taskRepository.findByChildModel(childModel);
+            List<RespTask> respTasksList = new ArrayList<>();
+            taskModels.forEach(taskModel -> {
+                RespTask respTask = new RespTask(
+                        taskModel.getExternalId(),
+                        taskModel.getSponsorModel().getExternalId(),
+                        taskModel.getChildModel().getExternalId(),
+                        taskModel.getTotalModel().getExternalId(),
+                        taskModel.getName(),
+                        taskModel.getDescription(),
+                        taskModel.getWeight(),
+                        taskModel.getValue(),
+                        taskModel.isComplete(),
+                        taskModel.getTotalModel().getRemainder()
+                );
+                respTasksList.add(respTask);
+            });
+
+            return ResponseEntity.status(HttpStatus.OK).body(respTasksList);
+        }
+        Messages messages = new Messages(messageProperty.getProperty("error.task.notFound"), HttpStatus.NOT_FOUND.value());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
+    }
+
+    @Transactional
+    public ResponseEntity<Object> updateTask(TaskDto taskDto, String externalId) {
+        TaskModel taskModel = taskRepository.findByExternalId(externalId);
+        if (taskModel != null) {
+            taskModel.setName(taskDto.getName());
+            taskModel.setDescription(taskDto.getDescription());
+            taskModel.setComplete(taskDto.getIsComplete());
             taskRepository.save(taskModel);
             RespTask respTask = new RespTask(
-                    taskModel.getExternalId(), taskModel.getName(), taskModel.getDescription(), taskModel.getWeight()
+                    taskModel.getExternalId(),
+                    taskModel.getSponsorModel().getExternalId(),
+                    taskModel.getChildModel().getExternalId(),
+                    taskModel.getTotalModel().getExternalId(),
+                    taskModel.getName(),
+                    taskModel.getDescription(),
+                    taskModel.getWeight(),
+                    taskModel.getValue(),
+                    taskModel.isComplete(),
+                    taskModel.getTotalModel().getRemainder()
             );
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(respTask);
-        } catch (NullPointerException e) {
-            Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.NOT_FOUND.value());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
+            return ResponseEntity.status(HttpStatus.OK).body(respTask);
         }
+        Messages messages = new Messages(messageProperty.getProperty("error.task.notFound"), HttpStatus.NOT_FOUND.value());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
+    }
+
+    @Transactional
+    public  ResponseEntity<Object> deleteTask(String externalId) {
+        TaskModel taskModel = taskRepository.findByExternalId(externalId);
+        if(taskModel != null) {
+            Optional<TotalMonthlyAmountModel> totalModel = totalRepository.findById(taskModel.getTotalModel().getIdTotal());
+            BigDecimal getRemainder =  new BigDecimal(taskModel.getTotalModel().getRemainder());
+            BigDecimal value = new BigDecimal(taskModel.getValue());
+            BigDecimal remainder = getRemainder.add(value);
+            remainder = remainder.setScale(2, RoundingMode.HALF_EVEN);
+            totalModel.get().setRemainder(remainder.doubleValue());
+            totalRepository.save(totalModel.get());
+            //Remove os relacionamentos
+            taskModel.getChildModel().removeTask(taskModel);
+            taskModel.getSponsorModel().removeTask(taskModel);
+            taskModel.getTotalModel().removeTask(taskModel);
+            taskRepository.delete(taskModel);
+            Messages messages = new Messages(messageProperty.getProperty("ok.total.delete"), HttpStatus.OK.value());
+
+            return ResponseEntity.status(HttpStatus.OK).body(messages);
+
+        }
+        Messages messages = new Messages(messageProperty.getProperty("error.task.notFound"), HttpStatus.NOT_FOUND.value());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
+
     }
 
 

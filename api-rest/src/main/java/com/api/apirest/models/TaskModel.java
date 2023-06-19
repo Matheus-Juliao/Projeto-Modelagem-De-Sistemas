@@ -31,6 +31,12 @@ public class TaskModel implements Serializable {
     @Column(nullable = false)
     private int weight;
 
+    @Column(nullable = false)
+    private double value;
+
+    @Column(nullable = false, name = "is_complete")
+    private boolean isComplete = false;
+
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;
 
@@ -38,4 +44,14 @@ public class TaskModel implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_sponsor", referencedColumnName = "id_sponsor")
     private SponsorModel sponsorModel;
+
+    //Chave estrangeira de Child 1:n
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_child", referencedColumnName = "id_child")
+    private ChildModel childModel;
+
+    //Chave estrangeira de Total 1:n
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_total", referencedColumnName = "id_total")
+    private TotalMonthlyAmountModel totalModel;
 }

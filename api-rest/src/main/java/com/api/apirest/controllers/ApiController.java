@@ -135,7 +135,7 @@ public class ApiController {
         return apiRestService.updateChild(childDto, externalId);
     }
 
-    @GetMapping("/listAllChild/{externalId}")
+    @GetMapping("/list-child/{externalId}")
     @Operation(summary = "Returns all child of Sponsor", description = "API to list all child of Sponsor and their information on the platform")
     public ResponseEntity<Object> listChild(@PathVariable String externalId) {
         return apiRestService.listChild(externalId);
@@ -242,7 +242,7 @@ public class ApiController {
 
 
     //Task
-    @PostMapping("task/new-task")
+    @PostMapping("/new-task")
     @Operation(summary = "Register new task",  description = "Api for register an new task on the platform")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created", content =  { @Content(mediaType = "application/json", schema = @Schema(implementation = RespTask.class)) }),
@@ -254,26 +254,37 @@ public class ApiController {
             throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
         }
 
-        //Manipula os atributos do model
-        TaskModel taskModel = new TaskModel();
-        BeanUtils.copyProperties(taskDto, taskModel);
-        taskModel.setCreatedDate(LocalDateTime.now(ZoneId.of("UTC")));
-        taskModel.setExternalId(UUID.randomUUID().toString());
-
-        return apiRestService.createTask(taskModel, taskDto.getExternalIdSponsor());
+        return apiRestService.createTask(taskDto);
     }
 
-//    @PutMapping("/update-task/{externalId}")
-//    @Operation(summary = "Update task",  description = "Api for update a task on the platform")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = RespTask.class)) }),
-//            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
-//            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
-//    })
-//    public ResponseEntity<Object> updateTask(@PathVariable String externalId, @RequestBody @Valid ChildDto childDto, @NotNull BindingResult result) throws BadRequest {
-//        if (result.hasErrors()) {
-//            throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
-//        }
-//        return apiRestService.updateChild(childDto, externalId);
-//    }
+    @GetMapping("/list-task/{externalId}")
+    @Operation(summary = "Returns all tasks of Sponsor", description = "API to list all tasks of Sponsor and their information on the platform")
+    public ResponseEntity<Object> listTask(@PathVariable String externalId) {
+        return apiRestService.listTask(externalId);
+    }
+
+    @PutMapping("/update-task/{externalId}")
+    @Operation(summary = "Update task",  description = "Api for update a task on the platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = RespTask.class)) }),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public ResponseEntity<Object> updateTask(@PathVariable String externalId, @RequestBody @Valid TaskDto taskDto, @NotNull BindingResult result) throws BadRequest {
+        if (result.hasErrors()) {
+            throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
+        }
+        return apiRestService.updateTask(taskDto, externalId);
+    }
+
+    @DeleteMapping("delete-task/{externalId}")
+    @Operation(summary = "Delete a task", description = "API to delete a task on the platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public ResponseEntity<Object> deleteTask(@PathVariable String externalId){
+        return apiRestService.deleteTask(externalId);
+    }
 }

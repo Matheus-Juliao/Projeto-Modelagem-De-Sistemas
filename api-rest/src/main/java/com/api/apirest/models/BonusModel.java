@@ -22,8 +22,8 @@ public class BonusModel implements Serializable {
     @Column(name = "external_id", length = 45, nullable = false, unique = true)
     private String externalId;
 
-    @Column(nullable = false)
-    private double bonus;
+    @Column(nullable = false, name = "bonus_weigth")
+    private double bonusWeigth;
 
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;

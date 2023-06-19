@@ -6,6 +6,8 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "TOTAL_MONTHLY_AMOUNT")
@@ -26,6 +28,9 @@ public class TotalMonthlyAmountModel implements Serializable {
     private double total;
 
     @Column(nullable = false)
+    private double remainder;
+
+    @Column(nullable = false)
     private String description;
 
     @Column(name = "created_date", nullable = false)
@@ -40,4 +45,18 @@ public class TotalMonthlyAmountModel implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_child", referencedColumnName = "id_child")
     private ChildModel childModel;
+
+    //Ligação da chave estrangeira de Task
+    @ManyToMany(mappedBy = "totalModel")
+    private List<TaskModel> taskModels = new ArrayList<>();
+
+    public void addTask(TaskModel task) {
+        taskModels.add(task);
+        task.setTotalModel(this);
+    }
+
+    public void removeTask(TaskModel task) {
+        taskModels.remove(task);
+        task.setTotalModel(null);
+    }
 }

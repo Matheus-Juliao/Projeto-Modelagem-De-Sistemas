@@ -140,8 +140,8 @@ public class ExceptionHandler {
             return "bonus";
         }
 
-        if(exception.getMessage().compareTo(messageProperty.getProperty("error.penalties.notNull")) == 0
-                || exception.getMessage().compareTo(messageProperty.getProperty("error.penalties.notBlank")) == 0) {
+        if(exception.getMessage().compareTo(messageProperty.getProperty("error.penalty.notNull")) == 0
+                || exception.getMessage().compareTo(messageProperty.getProperty("error.penalty.notBlank")) == 0) {
             return "penalties";
         }
 

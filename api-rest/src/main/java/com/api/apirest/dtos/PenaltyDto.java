@@ -17,5 +17,5 @@ public class PenaltyDto {
 
     @NotNull(message = "{error.penalty.notNull}")
     @Min(value = 0, message = "{error.penalty.notBlank}")
-    private double penalty;
+    private double penaltyWeigth;
 }
