@@ -33,4 +33,6 @@ public class TaskDto {
     @NotNull(message = "{error.weight.notNull}")
     @Min(value = 1, message = "{error.weight.notBlank}")
     private int weight;
+
+    private Boolean isComplete;
 }

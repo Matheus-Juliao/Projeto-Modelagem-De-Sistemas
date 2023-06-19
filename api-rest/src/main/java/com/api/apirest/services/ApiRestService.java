@@ -553,6 +553,7 @@ public class ApiRestService {
                         remainder = remainder.setScale(2, RoundingMode.HALF_EVEN);
                         totalModel.setRemainder(remainder.doubleValue());
                         valueTask = valueTask.setScale(2, RoundingMode.HALF_EVEN);
+                        taskModel.setValue(valueTask.doubleValue());
 
                         //Adiciona a nova tarefa ao Sponsor
                         sponsorModel.addTask(taskModel);
@@ -592,6 +593,113 @@ public class ApiRestService {
             Messages messages = new Messages(messageProperty.getProperty("error.sponsor.notFound"), HttpStatus.NOT_FOUND.value());
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messages);
+    }
+
+    @Transactional
+    public ResponseEntity<Object> listTask(String externaId) {
+        SponsorModel sponsorModel = sponsorRepository.findByExternalId(externaId);
+        if(sponsorModel != null) {
+            List<TaskModel> taskModels = taskRepository.findBySponsorModel(sponsorModel);
+            List<RespTask> respTasksList = new ArrayList<>();
+            taskModels.forEach(taskModel -> {
+                RespTask respTask = new RespTask(
+                        taskModel.getExternalId(),
+                        taskModel.getSponsorModel().getExternalId(),
+                        taskModel.getChildModel().getExternalId(),
+                        taskModel.getTotalModel().getExternalId(),
+                        taskModel.getName(),
+                        taskModel.getDescription(),
+                        taskModel.getWeight(),
+                        taskModel.getValue(),
+                        taskModel.isComplete(),
+                        taskModel.getTotalModel().getRemainder()
+                );
+                respTasksList.add(respTask);
+            });
+
+            return ResponseEntity.status(HttpStatus.OK).body(respTasksList);
+        }
+
+        ChildModel childModel = childRepository.findByExternalId(externaId);
+        if(childModel != null) {
+            List<TaskModel> taskModels = taskRepository.findByChildModel(childModel);
+            List<RespTask> respTasksList = new ArrayList<>();
+            taskModels.forEach(taskModel -> {
+                RespTask respTask = new RespTask(
+                        taskModel.getExternalId(),
+                        taskModel.getSponsorModel().getExternalId(),
+                        taskModel.getChildModel().getExternalId(),
+                        taskModel.getTotalModel().getExternalId(),
+                        taskModel.getName(),
+                        taskModel.getDescription(),
+                        taskModel.getWeight(),
+                        taskModel.getValue(),
+                        taskModel.isComplete(),
+                        taskModel.getTotalModel().getRemainder()
+                );
+                respTasksList.add(respTask);
+            });
+
+            return ResponseEntity.status(HttpStatus.OK).body(respTasksList);
+        }
+        Messages messages = new Messages(messageProperty.getProperty("error.task.notFound"), HttpStatus.NOT_FOUND.value());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
+    }
+
+    @Transactional
+    public ResponseEntity<Object> updateTask(TaskDto taskDto, String externalId) {
+        TaskModel taskModel = taskRepository.findByExternalId(externalId);
+        if (taskModel != null) {
+            taskModel.setName(taskDto.getName());
+            taskModel.setDescription(taskDto.getDescription());
+            taskModel.setComplete(taskDto.getIsComplete());
+            taskRepository.save(taskModel);
+            RespTask respTask = new RespTask(
+                    taskModel.getExternalId(),
+                    taskModel.getSponsorModel().getExternalId(),
+                    taskModel.getChildModel().getExternalId(),
+                    taskModel.getTotalModel().getExternalId(),
+                    taskModel.getName(),
+                    taskModel.getDescription(),
+                    taskModel.getWeight(),
+                    taskModel.getValue(),
+                    taskModel.isComplete(),
+                    taskModel.getTotalModel().getRemainder()
+            );
+
+            return ResponseEntity.status(HttpStatus.OK).body(respTask);
+        }
+        Messages messages = new Messages(messageProperty.getProperty("error.task.notFound"), HttpStatus.NOT_FOUND.value());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
+    }
+
+    @Transactional
+    public  ResponseEntity<Object> deleteTask(String externalId) {
+        TaskModel taskModel = taskRepository.findByExternalId(externalId);
+        if(taskModel != null) {
+            Optional<TotalMonthlyAmountModel> totalModel = totalRepository.findById(taskModel.getTotalModel().getIdTotal());
+            BigDecimal getRemainder =  new BigDecimal(taskModel.getTotalModel().getRemainder());
+            BigDecimal value = new BigDecimal(taskModel.getValue());
+            BigDecimal remainder = getRemainder.add(value);
+            remainder = remainder.setScale(2, RoundingMode.HALF_EVEN);
+            totalModel.get().setRemainder(remainder.doubleValue());
+            totalRepository.save(totalModel.get());
+            //Remove os relacionamentos
+            taskModel.getChildModel().removeTask(taskModel);
+            taskModel.getSponsorModel().removeTask(taskModel);
+            taskModel.getTotalModel().removeTask(taskModel);
+            taskRepository.delete(taskModel);
+            Messages messages = new Messages(messageProperty.getProperty("ok.total.delete"), HttpStatus.OK.value());
+
+            return ResponseEntity.status(HttpStatus.OK).body(messages);
+
+        }
+        Messages messages = new Messages(messageProperty.getProperty("error.task.notFound"), HttpStatus.NOT_FOUND.value());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messages);
+
     }
 
 

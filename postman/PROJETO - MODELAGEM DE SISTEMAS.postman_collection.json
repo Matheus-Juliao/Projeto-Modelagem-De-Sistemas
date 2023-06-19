@@ -138,7 +138,7 @@
 			"response": []
 		},
 		{
-			"name": "list all child of sponsor",
+			"name": "list all tasks of sponsor",
 			"request": {
 				"auth": {
 					"type": "noauth"
@@ -146,7 +146,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api-rest/listAllChild/9e863cfd-a1d7-4ffb-aa06-4572668bc7ef",
+					"raw": "http://localhost:8080/api-rest/list-child/9e863cfd-a1d7-4ffb-aa06-4572668bc7ef",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -154,7 +154,7 @@
 					"port": "8080",
 					"path": [
 						"api-rest",
-						"listAllChild",
+						"list-child",
 						"9e863cfd-a1d7-4ffb-aa06-4572668bc7ef"
 					]
 				}
@@ -308,7 +308,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api-rest/show-total/ef8b86bf-afd4-4b4f-a428-429fd721156c",
+					"raw": "http://localhost:8080/api-rest/show-total/201b70c0-4026-424c-a52c-e0fa84161494",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -317,14 +317,14 @@
 					"path": [
 						"api-rest",
 						"show-total",
-						"ef8b86bf-afd4-4b4f-a428-429fd721156c"
+						"201b70c0-4026-424c-a52c-e0fa84161494"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "delete total monthly amount",
+			"name": "delete total monthly amount Copy",
 			"request": {
 				"method": "DELETE",
 				"header": [],
@@ -409,7 +409,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"externalIdSponsor\": \"7e327404-1b0e-4dc6-85d7-120269568d5d\",\r\n    \"externalIdChild\": \"201b70c0-4026-424c-a52c-e0fa84161494\",\r\n    \"externalIdTotal\": \"9ad43b0d-bfb6-4bc1-91f2-968138e0eaa1\",\r\n    \"name\": \"Lavar banheiro\",\r\n    \"description\": \"Lavar banheiro utilizando os produtos necessários conforme combinado\",\r\n    \"weight\": 10\r\n}",
+					"raw": "{\r\n    \"externalIdSponsor\": \"7e327404-1b0e-4dc6-85d7-120269568d5d\",\r\n    \"externalIdChild\": \"201b70c0-4026-424c-a52c-e0fa84161494\",\r\n    \"externalIdTotal\": \"ef8b86bf-afd4-4b4f-a428-429fd721156c\",\r\n    \"name\": \"Lavar banheiro\",\r\n    \"description\": \"Lavar banheiro utilizando os produtos necessários conforme combinado\",\r\n    \"weight\": 10\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -417,7 +417,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api-rest/task/new-task",
+					"raw": "http://localhost:8080/api-rest/new-task",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -425,8 +425,82 @@
 					"port": "8080",
 					"path": [
 						"api-rest",
-						"task",
 						"new-task"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list all tasks of sponsor",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api-rest/list-task/7e327404-1b0e-4dc6-85d7-120269568d5d",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"list-task",
+						"7e327404-1b0e-4dc6-85d7-120269568d5d"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update task",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"externalIdSponsor\": \"7e327404-1b0e-4dc6-85d7-120269568d5d\",\r\n    \"externalIdChild\": \"201b70c0-4026-424c-a52c-e0fa84161494\",\r\n    \"externalIdTotal\": \"ef8b86bf-afd4-4b4f-a428-429fd721156c\",\r\n    \"name\": \"Lavar banheiro e seca-lo\",\r\n    \"description\": \"Lavar banheiro utilizando os produtos necessários conforme combinado. Fazer serviço completo!\",\r\n    \"weight\": 10,\r\n    \"isComplete\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/update-task/32f49371-e6bc-43a8-81d9-63037b4c7f65",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"update-task",
+						"32f49371-e6bc-43a8-81d9-63037b4c7f65"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete task",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api-rest/delete-task/20b7ab3a-d91b-4108-8e60-8772bedcaace",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"delete-task",
+						"20b7ab3a-d91b-4108-8e60-8772bedcaace"
 					]
 				}
 			},
