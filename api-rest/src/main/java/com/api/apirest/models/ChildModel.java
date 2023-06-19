@@ -46,6 +46,10 @@ public class ChildModel implements Serializable {
     @ManyToMany(mappedBy = "childModels")
     private List<SponsorModel> sponsorModels = new ArrayList<>();
 
+    //Ligação da chave estrangeira de Task
+    @ManyToMany(mappedBy = "childModel")
+    private List<TaskModel> taskModels = new ArrayList<>();
+
     //Ligação da chave estrangeira de Total
     @ManyToMany(mappedBy = "childModel")
     private List<TotalMonthlyAmountModel> totalModels = new ArrayList<>();
@@ -58,5 +62,15 @@ public class ChildModel implements Serializable {
     public void removeTotal(TotalMonthlyAmountModel total) {
         totalModels.remove(total);
         total.setChildModel(null);
+    }
+
+    public void addTask(TaskModel task) {
+        taskModels.add(task);
+        task.setChildModel(this);
+    }
+
+    public void removeTask(TaskModel task) {
+        taskModels.remove(task);
+        task.setChildModel(null);
     }
 }

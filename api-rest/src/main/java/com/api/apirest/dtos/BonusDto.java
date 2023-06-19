@@ -17,5 +17,5 @@ public class BonusDto {
 
     @NotNull(message = "{error.bonus.notNull}")
     @Min(value = 0, message = "{error.bonus.notBlank}")
-    private double bonus;
+    private double bonusWeigth;
 }

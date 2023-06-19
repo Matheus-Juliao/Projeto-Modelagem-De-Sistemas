@@ -254,13 +254,7 @@ public class ApiController {
             throw new BadRequest(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
         }
 
-        //Manipula os atributos do model
-        TaskModel taskModel = new TaskModel();
-        BeanUtils.copyProperties(taskDto, taskModel);
-        taskModel.setCreatedDate(LocalDateTime.now(ZoneId.of("UTC")));
-        taskModel.setExternalId(UUID.randomUUID().toString());
-
-        return apiRestService.createTask(taskModel, taskDto.getExternalIdSponsor());
+        return apiRestService.createTask(taskDto);
     }
 
 //    @PutMapping("/update-task/{externalId}")

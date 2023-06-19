@@ -21,8 +21,8 @@ public class PenaltyModel {
     @Column(name = "external_id", length = 45, nullable = false, unique = true)
     private String externalId;
 
-    @Column(nullable = false)
-    private double penalty;
+    @Column(nullable = false, name = "penalty_weigth")
+    private double penaltyWeigth;
 
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;

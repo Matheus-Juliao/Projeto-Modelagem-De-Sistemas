@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"Matheus José Julião\",\r\n    \"email\": \"matheusjosejuliao@gmail.com\",\r\n    \"password\": \"test123\"\r\n}",
+					"raw": "{\r\n    \"name\": \"Jackson Freitas\",\r\n    \"email\": \"jacksonfreitas@gmail.com\",\r\n    \"password\": \"test123\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -41,7 +41,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api-rest/list-sponsor/7e327404-1b0e-4dc6-85d7-120269568d5d",
+					"raw": "http://localhost:8080/api-rest/list-sponsor/9e863cfd-a1d7-4ffb-aa06-4572668bc7ef",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -50,7 +50,7 @@
 					"path": [
 						"api-rest",
 						"list-sponsor",
-						"7e327404-1b0e-4dc6-85d7-120269568d5d"
+						"9e863cfd-a1d7-4ffb-aa06-4572668bc7ef"
 					]
 				}
 			},
@@ -63,7 +63,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"Matheus Julião\",\r\n    \"email\": \"matheusjosejuliao@gmail.com.br\",\r\n    \"password\": \"test12345\"\r\n}",
+					"raw": "{\r\n    \"name\": \"Jackson Marcelino de Freitas\",\r\n    \"email\": \"jacksonfreitas@gmail.com.br\",\r\n    \"password\": \"test123\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -71,7 +71,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api-rest/update-sponsor/ab16901c-34c1-434a-b5cf-7d9e854fb0fd",
+					"raw": "http://localhost:8080/api-rest/update-sponsor/9e863cfd-a1d7-4ffb-aa06-4572668bc7ef",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -80,7 +80,7 @@
 					"path": [
 						"api-rest",
 						"update-sponsor",
-						"ab16901c-34c1-434a-b5cf-7d9e854fb0fd"
+						"9e863cfd-a1d7-4ffb-aa06-4572668bc7ef"
 					]
 				}
 			},
@@ -114,7 +114,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"externalIdSponsor\": \"7e327404-1b0e-4dc6-85d7-120269568d5\",\r\n    \"name\": \"Issac Julião\",\r\n    \"nickname\": \"Issac0\",\r\n    \"age\": 8,\r\n    \"password\": \"test123\"\r\n}",
+					"raw": "{\r\n    \"externalIdSponsor\": \"9e863cfd-a1d7-4ffb-aa06-4572668bc7ef\",\r\n    \"name\": \"Jackson Junior\",\r\n    \"nickname\": \"jr_jackson12\",\r\n    \"age\": 12,\r\n    \"password\": \"test123\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -146,7 +146,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api-rest/listAllChild/7e327404-1b0e-4dc6-85d7-120269568d5d",
+					"raw": "http://localhost:8080/api-rest/listAllChild/9e863cfd-a1d7-4ffb-aa06-4572668bc7ef",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -155,7 +155,7 @@
 					"path": [
 						"api-rest",
 						"listAllChild",
-						"7e327404-1b0e-4dc6-85d7-120269568d5d"
+						"9e863cfd-a1d7-4ffb-aa06-4572668bc7ef"
 					]
 				}
 			},
@@ -219,7 +219,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"user\": \"matheusjosejuliao@gmail.com\",\r\n    \"password\": \"test123\",\r\n    \"isChild\": false\r\n}",
+					"raw": "{\r\n    \"user\": \"jacksonfreitas@gmail.com\",\r\n    \"password\": \"test123\",\r\n    \"isChild\": false\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -248,7 +248,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"user\": \"Isaac08\",\r\n    \"password\": \"test123\",\r\n    \"isChild\": true\r\n}",
+					"raw": "{\r\n    \"user\": \"jr_jackson12\",\r\n    \"password\": \"test123\",\r\n    \"isChild\": true\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -300,7 +300,7 @@
 			"response": []
 		},
 		{
-			"name": "show total monthly amount",
+			"name": "show total monthly amount of sponsor",
 			"request": {
 				"auth": {
 					"type": "noauth"
@@ -308,7 +308,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api-rest/show-total/7e327404-1b0e-4dc6-85d7-120269568d5d",
+					"raw": "http://localhost:8080/api-rest/show-total/ef8b86bf-afd4-4b4f-a428-429fd721156c",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -317,7 +317,7 @@
 					"path": [
 						"api-rest",
 						"show-total",
-						"7e327404-1b0e-4dc6-85d7-120269568d5d"
+						"ef8b86bf-afd4-4b4f-a428-429fd721156c"
 					]
 				}
 			},
@@ -329,7 +329,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api-rest/delete-total/e1f96143-424e-413a-b735-8fa2d426bf17",
+					"raw": "http://localhost:8080/api-rest/delete-total/ef8b86bf-afd4-4b4f-a428-429fd721156c",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -338,7 +338,7 @@
 					"path": [
 						"api-rest",
 						"delete-total",
-						"e1f96143-424e-413a-b735-8fa2d426bf17"
+						"ef8b86bf-afd4-4b4f-a428-429fd721156c"
 					]
 				}
 			},
@@ -351,7 +351,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"externalIdSponsor\": \"7e327404-1b0e-4dc6-85d7-120269568d5d\",\r\n    \"externalIdTotal\": \"47ee77a6-0e13-4631-b9fd-e138a1e28209\",\r\n    \"bonus\": 10.50\r\n}",
+					"raw": "{\r\n    \"externalIdSponsor\": \"7e327404-1b0e-4dc6-85d7-120269568d5d\",\r\n    \"externalIdTotal\": \"198b9f32-035d-41fb-804b-58feab374f8e\",\r\n    \"bonusWeigth\": 10\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -374,13 +374,13 @@
 			"response": []
 		},
 		{
-			"name": "apply bonus total Copy",
+			"name": "apply penalty total",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"externalIdSponsor\": \"7e327404-1b0e-4dc6-85d7-120269568d5d\",\r\n    \"externalIdTotal\": \"47ee77a6-0e13-4631-b9fd-e138a1e28209\",\r\n    \"penalty\": 10.50\r\n}",
+					"raw": "{\r\n    \"externalIdSponsor\": \"7e327404-1b0e-4dc6-85d7-120269568d5d\",\r\n    \"externalIdTotal\": \"198b9f32-035d-41fb-804b-58feab374f8e\",\r\n    \"penaltyWeigth\": 10\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -409,7 +409,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"externalIdSponsor\": \"03faf53c-820b-490b-80c9-9b647bfb727e\",\r\n    \"name\": \"Lavar banheiro\",\r\n    \"description\": \"Lavar banheiro utilizando os produtos necessários conforme combinado\",\r\n    \"weight\": 10\r\n}",
+					"raw": "{\r\n    \"externalIdSponsor\": \"7e327404-1b0e-4dc6-85d7-120269568d5d\",\r\n    \"externalIdChild\": \"201b70c0-4026-424c-a52c-e0fa84161494\",\r\n    \"externalIdTotal\": \"9ad43b0d-bfb6-4bc1-91f2-968138e0eaa1\",\r\n    \"name\": \"Lavar banheiro\",\r\n    \"description\": \"Lavar banheiro utilizando os produtos necessários conforme combinado\",\r\n    \"weight\": 10\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

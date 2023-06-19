@@ -12,6 +12,14 @@ public class TaskDto {
     @NotNull(message = "{error.externalIdSponsor.notNull}")
     private String externalIdSponsor;
 
+    @NotBlank(message = "{error.externalIdChild.notBlank}")
+    @NotNull(message = "{error.externalIdChild.notNull}")
+    private String externalIdChild;
+
+    @NotBlank(message = "{error.externalIdTotal.notBlank}")
+    @NotNull(message = "{error.externalIdTotal.notNull}")
+    private String externalIdTotal;
+
     @NotBlank(message = "{error.name.notBlank}")
     @NotNull(message = "{error.name.notNull}")
     @Size(min = 2, max = 50, message = "{error.nameTask.size}")
