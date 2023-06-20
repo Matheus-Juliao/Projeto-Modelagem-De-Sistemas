@@ -6,36 +6,32 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "TASK")
+@Table(name = "TOTAL_MONTHLY_AMOUNT")
 @Data
-public class TaskModel implements Serializable {
+public class TotalMonthlyAmountModel implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "id_task")
+    @Column(name = "id_total")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idTask;
+    private Long idTotal;
 
     @Column(name = "external_id", length = 45, nullable = false, unique = true)
     private String externalId;
 
-    @Column(nullable = false, length = 50)
-    private String name;
+    @Column(nullable = false)
+    private double total;
+
+    @Column(nullable = false)
+    private double remainder;
 
     @Column(nullable = false)
     private String description;
-
-    @Column(nullable = false)
-    private int weight;
-
-    @Column(nullable = false)
-    private double value;
-
-    @Column(nullable = false, name = "is_complete")
-    private boolean isComplete = false;
 
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;
@@ -50,8 +46,17 @@ public class TaskModel implements Serializable {
     @JoinColumn(name = "id_child", referencedColumnName = "id_child")
     private ChildModel childModel;
 
-    //Chave estrangeira de Total 1:n
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_total", referencedColumnName = "id_total")
-    private TotalMonthlyAmountModel totalModel;
+    //Ligação da chave estrangeira de Task
+    @ManyToMany(mappedBy = "totalModel")
+    private List<TaskModel> taskModels = new ArrayList<>();
+
+    public void addTask(TaskModel task) {
+        taskModels.add(task);
+        task.setTotalModel(this);
+    }
+
+    public void removeTask(TaskModel task) {
+        taskModels.remove(task);
+        task.setTotalModel(null);
+    }
 }

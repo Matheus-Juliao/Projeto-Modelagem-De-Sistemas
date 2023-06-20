@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 public class ChildDto {
-
     @NotBlank(message = "{error.externalIdSponsor.notBlank}")
     @NotNull(message = "{error.externalIdSponsor.notNull}")
     private String externalIdSponsor;

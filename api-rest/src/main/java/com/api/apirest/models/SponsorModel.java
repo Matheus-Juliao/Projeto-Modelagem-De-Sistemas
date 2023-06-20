@@ -36,6 +36,7 @@ public class SponsorModel implements Serializable {
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;
 
+    //Chave estrangeira de Sponsor e Child n:n
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "sponsor_child",
             schema = "public",
@@ -43,8 +44,41 @@ public class SponsorModel implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "id_child", referencedColumnName = "id_child"))
     private List<ChildModel> childModels = new ArrayList<>();
 
+    //Ligação da chave estrangeira de tarefas
     @OneToMany(mappedBy = "sponsorModel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TaskModel> tasks = new ArrayList<>();
+
+    //Ligação da chave estrangeira de Total
+    @OneToMany(mappedBy = "sponsorModel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TotalMonthlyAmountModel> totalModels = new ArrayList<>();
+
+    //Ligação da chave estrangeira de bônus
+    @OneToMany(mappedBy = "sponsorModel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BonusModel> bonusModels = new ArrayList<>();
+
+    //Ligação da chave estrangeira de penalidades
+    @OneToMany(mappedBy = "sponsorModel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PenaltyModel> penaltyModels = new ArrayList<>();
+
+    public void addTotal(TotalMonthlyAmountModel total) {
+        totalModels.add(total);
+        total.setSponsorModel(this);
+    }
+
+    public void removeTotal(TotalMonthlyAmountModel total) {
+        totalModels.remove(total);
+        total.setSponsorModel(null);
+    }
+
+    public void addBonus(BonusModel bonusModel) {
+        bonusModels.add(bonusModel);
+        bonusModel.setSponsorModel(this);
+    }
+
+    public void addPenalty(PenaltyModel penaltyModel) {
+        penaltyModels.add(penaltyModel);
+        penaltyModel.setSponsorModel(this);
+    }
 
     public void addTask(TaskModel task) {
         tasks.add(task);

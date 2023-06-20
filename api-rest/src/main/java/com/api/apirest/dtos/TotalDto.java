@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class TaskDto {
+public class TotalDto {
     @NotBlank(message = "{error.externalIdSponsor.notBlank}")
     @NotNull(message = "{error.externalIdSponsor.notNull}")
     private String externalIdSponsor;
@@ -16,23 +16,12 @@ public class TaskDto {
     @NotNull(message = "{error.externalIdChild.notNull}")
     private String externalIdChild;
 
-    @NotBlank(message = "{error.externalIdTotal.notBlank}")
-    @NotNull(message = "{error.externalIdTotal.notNull}")
-    private String externalIdTotal;
-
-    @NotBlank(message = "{error.name.notBlank}")
-    @NotNull(message = "{error.name.notNull}")
-    @Size(min = 2, max = 50, message = "{error.nameTask.size}")
-    private String name;
+    @NotNull(message = "{error.total.notNull}")
+    @Min(value = 0, message = "{error.total.notBlank}")
+    private double total;
 
     @NotBlank(message = "{error.description.notBlank}")
     @NotNull(message = "{error.description.notNull}")
     @Size(message = "{error.description.size}", max = 300)
     private String description;
-
-    @NotNull(message = "{error.weight.notNull}")
-    @Min(value = 1, message = "{error.weight.notBlank}")
-    private int weight;
-
-    private Boolean isComplete;
 }
