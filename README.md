@@ -69,13 +69,3 @@ O sistema de gerenciamento de tarefas de crianças, faz o gerenciamento de ativi
 - consultar valores ganhos
 
 - consultar lista de tarefas e seus pesos
-
-## Modelo implementado dos pontos no storypoint
-- 1/2: até 2 horas
-- 1: até 4 horas
-- 2: até 8 horas
-- 3: até 2 dias
-- 5: até 3 dias
-- 8: até 1 semana
-- 13: até 2 semanas
-- 20: mais de 2 semanas 
