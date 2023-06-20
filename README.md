@@ -23,10 +23,6 @@ O sistema de gerenciamento de tarefas de crianças, faz o gerenciamento de ativi
 
 - O responsável entraria no sistema, efetuaria o login e criaria a atividade, inserindo o nome, peso em porcentagem e descrição. Da mesma maneira, esta poderia ser editada e excluída. O responsável poderia fazer a confirmação da atividade como realizada no sistema.
 
-### Cadastrar valor mensal total: 
-
-- O responsável entraria no sistema e adicionaria um valor mensal de recompensa para cada criança cadastrada, podendo também simplesmente editá-lo ou remove-lo.
-
 ### Atribuir bônus: 
 
 - O responsável no decorrer do mês de tarefas, poderá adicionar um valor bônus que será somado ao valor mensal total, mas que estará registrado como bônus.
