@@ -73,16 +73,17 @@ O sistema de gerenciamento de tarefas de crianças, faz o gerenciamento de ativi
 ## Como rodar o projeto?
 
 PASSOS
-    Requistos:
-    Kit de desenvovimento do java instalado
-    O projeto foi feito com java 17 e Spring boot 3.1.0
-        
-    1 - Baixar o repositório na máquina. URL: https://github.com/Matheus-Juliao/Projeto-Modelagem-De-Sistemas
-    2 - Abrir a pasta api-rest em alguma IDE de sua escolha. Sugestão: Intellij.
-    3 - Configurar o banco de dados:
-        - Entre na pasta da pasta api-rest -> src -> main -> resources 
-        - Abra o arquivo application.properties.
-        - Configure o nome e senha do seu banco de dados. Nesse projeto utilizamos o PostgresSQL.
-    4 - Após configurar o banco de dados coloque para rodar o servidor local.
-    5 - Na pasta raiz do reposítorio baixado existe uma pasta chamada postman, onde estão todas as request configuradas. Utilize-a para fazer testes.
-        OBS: Na url http://localhost:8080/swagger-ui/index.html#/ está configurado o swaager, que é uma documentação de apoio para realizar as requests necessárias.
+### Requistos:
+Kit de desenvovimento do java instalado (JDK)
+O projeto foi feito com java 17 e Spring boot 3.1.0
+    
+- Baixar o repositório na máquina.
+      URL: https://github.com/Matheus-Juliao/Projeto-Modelagem-De-Sistemas
+- Abrir a pasta api-rest em alguma IDE de sua escolha. Sugestão: Intellij.
+- Configurar o banco de dados:
+      Entre na pasta da pasta api-rest -> src -> main -> resources 
+      Abra o arquivo application.properties.
+      Configure o nome e senha do seu banco de dados. Nesse projeto utilizamos o PostgresSQL.
+- Após configurar o banco de dados coloque para rodar o servidor local.
+- Na pasta raiz do reposítorio baixado existe uma pasta chamada postman, onde estão todas as request configuradas. Utilize-a para fazer testes.
+  OBS: Na url http://localhost:8080/swagger-ui/index.html#/ está configurado o swaager, que é uma documentação de apoio para realizar as requests necessárias.
