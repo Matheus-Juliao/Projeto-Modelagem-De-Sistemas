@@ -93,4 +93,5 @@ O projeto foi feito com java 17 e Spring boot 3.1.0
   
 - Após configurar o banco de dados coloque para rodar o servidor local.
 - Na pasta raiz do reposítorio baixado existe uma pasta chamada postman, onde estão todas as request configuradas. Utilize-a para fazer testes.
+  
   OBS: Na url http://localhost:8080/swagger-ui/index.html#/ está configurado o swaager, que é uma documentação de apoio para realizar as requests necessárias.
