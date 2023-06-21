@@ -60,6 +60,7 @@ public class ApiRestService {
     SecurityConfigurations securityConfigurations;
 
     //Sponsor
+    //Já está no teste
     @Transactional
     public ResponseEntity<Object> createSponsor (SponsorModel sponsorModel) {
         //Verificar se o responsável já está cadastrado no banco de dados
@@ -126,6 +127,7 @@ public class ApiRestService {
 
 
     //Child
+   //Já está no teste
     @Transactional
     public ResponseEntity<Object> createChild (ChildModel childModel, String externalIdSponsor) {
         try {
