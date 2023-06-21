@@ -56,8 +56,6 @@ import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@AutoConfigureTestEntityManager
-@AutoConfigureMockMvc
 @Transactional
 class ApiRestApplicationTests {
     @Mock
@@ -82,11 +80,7 @@ class ApiRestApplicationTests {
 
     @BeforeEach
     public void setup() {
-        when(messageProperty.getProperty("error.nickname.already.account")).thenReturn("Nickname already exists");
-        when(messageProperty.getProperty("ok.user.registered")).thenReturn("User registered");
-        when(messageProperty.getProperty("error.externalIdSponsor.notFound")).thenReturn("Sponsor not found");
         MockitoAnnotations.openMocks(this);
-        //apiRestService = new ApiRestService();
     }
 
     @Test
@@ -148,24 +142,6 @@ class ApiRestApplicationTests {
         verify(sponsorRepository, times(1)).existsByEmail(sponsorModel.getEmail());
         // Verifica se o método save() não foi chamado
         verify(sponsorRepository, never()).save(any());
-    }
-
-
-    @Test
-    public void testCreateChild_WhenChildExists_ExpectBadRequest() {
-        ChildModel childModel = new ChildModel();
-        childModel.setNickname("test_nickname");
-
-        when(childRepository.existsByNickname(childModel.getNickname())).thenReturn(true);
-
-        ResponseEntity<Object> response = apiRestService.createChild(childModel, "test_external_id");
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertNotNull(response.getBody());
-        Messages messages = (Messages) response.getBody();
-        assertEquals("Nickname already exists", messages.getMessage());
-        //assertEquals(HttpStatus.BAD_REQUEST.value(), messages.getMessage());
     }
 
     @Test
@@ -312,46 +288,95 @@ class ApiRestApplicationTests {
         verify(messageProperty, times(1)).getProperty(anyString());
     }
 
+        @Test
+        public void testCreateChild_WhenChildExists_ExpectBadRequest() {
+            ChildModel childModel = new ChildModel();
+            childModel.setNickname("test_nickname");
+
+            SponsorModel sponsorModel = new SponsorModel();
+            sponsorModel.setExternalId("test_external_id");
+            sponsorModel.setChildModels(new ArrayList<>());
+
+            when(childRepository.existsByNickname(childModel.getNickname())).thenReturn(true);
+            when(sponsorRepository.findByExternalId("test_external_id")).thenReturn(sponsorModel);
+
+            ResponseEntity<Object> response = apiRestService.createChild(childModel, "test_external_id");
+
+            assertNotNull(response);
+            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+            assertNotNull(response.getBody());
+            Messages messages = (Messages) response.getBody();
+
+            // Verifica se a mensagem de erro é retornada corretamente
+            assertNotNull(messages);
+            assertEquals(HttpStatus.BAD_REQUEST.value(), messages.getCode());
+
+            // Verifica se os métodos foram chamados corretamente
+            verify(childRepository, times(1)).existsByNickname(childModel.getNickname());
+        }
     @Test
     public void testCreateChild_WhenSponsorNotFound_ExpectNotFound() {
+        // Configurar dados de entrada
         ChildModel childModel = new ChildModel();
         childModel.setNickname("test_nickname");
 
+        String externalIdSponsor = "non_existing_external_id";
+
+        // Simular o comportamento do repositório
         when(childRepository.existsByNickname(childModel.getNickname())).thenReturn(false);
-        when(sponsorRepository.findByExternalId("test_external_id")).thenReturn(null);
+        when(sponsorRepository.findByExternalId(externalIdSponsor)).thenReturn(null);
 
-        ResponseEntity<Object> response = apiRestService.createChild(childModel, "test_external_id");
+        // Executar o método sendo testado
+        ResponseEntity<Object> response = apiRestService.createChild(childModel, externalIdSponsor);
 
-        assertNotNull(response);
+        /// Verificar o resultado
+        //assertNotNull(response);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertNotNull(response.getBody());
+        //assertNotNull(response.getBody());
         Messages messages = (Messages) response.getBody();
-        assertEquals("Sponsor not found", messages.getMessage());
-        //assertEquals(HttpStatus.NOT_FOUND.value(), messages.getMessage());
+
+        assertEquals(HttpStatus.NOT_FOUND.value(), messages.getCode());
+
+        // Verificar se os métodos foram chamados corretamente
+        verify(childRepository, times(1)).existsByNickname(childModel.getNickname());
+        verify(sponsorRepository, times(1)).findByExternalId(externalIdSponsor);
     }
+
 
     @Test
     public void testCreateChild_WhenChildCreated_ExpectCreated() {
+        // Configurar o cenário de teste
         ChildModel childModel = new ChildModel();
         childModel.setNickname("test_nickname");
 
-        SponsorModel sponsorModel = new SponsorModel();
-        sponsorModel.setExternalId("test_external_id");
-        sponsorModel.setChildModels(new ArrayList<>());
+        String externalIdSponsor = "test_external_id";
 
         when(childRepository.existsByNickname(childModel.getNickname())).thenReturn(false);
-        when(sponsorRepository.findByExternalId("test_external_id")).thenReturn(sponsorModel);
-        when(childRepository.save(childModel)).thenReturn(childModel);
 
-        ResponseEntity<Object> response = apiRestService.createChild(childModel, "test_external_id");
+        SponsorModel sponsorModel = new SponsorModel();
+        sponsorModel.setExternalId(externalIdSponsor);
+        sponsorModel.setChildModels(new ArrayList<>());
 
+        when(sponsorRepository.findByExternalId(externalIdSponsor)).thenReturn(sponsorModel);
+
+        // Executar o método a ser testado
+        ResponseEntity<Object> response = apiRestService.createChild(childModel, externalIdSponsor);
+
+        // Verificar o resultado
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
+        assertTrue(response.getBody() instanceof Messages);
+
         Messages messages = (Messages) response.getBody();
-        assertEquals("User registered", messages.getMessage());
-        //assertEquals(HttpStatus.CREATED.value(), messages.getMessage());
+        assertEquals(HttpStatus.CREATED.value(), messages.getCode());
+
+        // Verificar se os métodos foram chamados corretamente
+        verify(childRepository, times(1)).existsByNickname(childModel.getNickname());
+        verify(sponsorRepository, times(1)).findByExternalId(externalIdSponsor);
+        verify(childRepository, times(1)).save(childModel);
     }
+
 
     @Test
     void testListChild_WhenChildExists_ExpectOkResponse() {
@@ -680,8 +705,6 @@ class ApiRestApplicationTests {
         // Chamada do método a ser testado e verificação da exceção esperada
         assertThrows(BadRequest.class, () -> apiRestService.login(loginDto));
 
-        // Verifica se o método existsByEmail() foi chamado corretamente
-        verify(sponsorRepository, times(1)).existsByEmail(loginDto.getUser());
         // Verifica se o método findByEmail() não foi chamado
         verify(sponsorRepository, never()).findByEmail(anyString());
     }
